@@ -25,10 +25,6 @@
 	  if (!positionHasBeenSet) positionHasBeenSet = true
 	})
   </script>
-  <Environment
-	path="/hdr/"
-	files="shanghai_riverside_1k.hdr"
-  />
   <T.DirectionalLight
 	castShadow
 	position={[8, 20, -3]}
@@ -72,3 +68,4 @@
 	  />
 	</AutoColliders>
   </CollisionGroups>
+  

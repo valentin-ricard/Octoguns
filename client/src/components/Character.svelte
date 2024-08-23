@@ -5,6 +5,8 @@
     import { onDestroy } from 'svelte'
     import { PerspectiveCamera, Vector3 } from 'three'
     import PointerLockControls from './PointerLockControls.svelte'
+    import Gun from './Gun.svelte'
+
     export let position: [x: number, y: number, z: number] = [0, 0, 0]
     let radius = 0.3
     let height = 1.7
@@ -19,7 +21,7 @@
     const t = new Vector3()
     const lockControls = () => lock()
     const { renderer } = useThrelte()
-    
+
     renderer.domElement.addEventListener('click', lockControls)
 
     onDestroy(() => {
@@ -119,4 +121,5 @@
         </T.Group>
       </CollisionGroups>
     </RigidBody>
+    <Gun position={[0,2,2]}/>
   </T.Group>

@@ -14,6 +14,7 @@
     const dispatch = createEventDispatcher()
     const _euler = new Euler(0, 0, 0, 'YXZ')
     const _PI_2 = Math.PI / 2
+    
     if (!renderer) {
       throw new Error('Threlte Context missing: Is <PointerLockControls> a child of <Canvas>?')
     }
