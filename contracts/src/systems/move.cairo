@@ -33,6 +33,7 @@ mod actions {
     use octoguns::models::sessions::{Session};
     use octoguns::models::character::{Character, Position};
     use octoguns::lib::moveChecks::{CharacterPosition, does_collide};
+    use octoguns::lib::dataCollect::{get_character_ids};
     use starknet::{ContractAddress, get_caller_address};
     use array::ArrayTrait;
 
@@ -47,24 +48,7 @@ mod actions {
             let mut initial_positions: Array<CharacterPosition> = ArrayTrait::new();
 
             // Collect all unique character IDs from all moves
-            let mut all_character_ids: Array<u32> = ArrayTrait::new();
-            let mut move_index = 0;
-            loop {
-                if move_index >= moves.len() {
-                    break;
-                }
-                let character_move = moves.at(move_index);
-                let mut char_index = 0;
-                loop {
-                    if char_index >= character_move.character_ids.len() {
-                        break;
-                    }
-                    let character_id = *character_move.character_ids.at(char_index);
-                    all_character_ids.append(character_id);
-                    char_index += 1;
-                };
-                move_index += 1;
-            };
+            let all_character_ids = get_character_ids(moves);
 
             // Get initial positions for all characters
             let mut char_index = 0;

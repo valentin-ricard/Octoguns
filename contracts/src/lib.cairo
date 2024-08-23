@@ -13,4 +13,5 @@ mod models {
 mod lib {
     mod defaultSpawns;
     mod moveChecks;
+    mod dataCollect;
 }
