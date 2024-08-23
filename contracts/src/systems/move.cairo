@@ -1,5 +1,6 @@
 use array::ArrayTrait;
 use starknet::ContractAddress;
+use octoguns::lib::moveChecks::{CharacterPosition, does_collide};
 
 #[derive(Copy, Drop, Serde)]
 struct Vector2 {
@@ -31,18 +32,9 @@ mod actions {
     use super::{Vector2, Action, CharacterMove};
     use octoguns::models::sessions::{Session};
     use octoguns::models::character::{Character, Position};
+    use octoguns::lib::moveChecks::{CharacterPosition, does_collide};
     use starknet::{ContractAddress, get_caller_address};
     use array::ArrayTrait;
-
-    // Define a struct to hold character ID and position
-    #[derive(Drop, Copy)]
-    struct CharacterPosition {
-        id: u32,
-        x: u16,
-        y: u16,
-        max_steps: u32,
-        current_step: u32,
-    }
 
     #[abi(embed_v0)]
     impl MoveImpl of IMove<ContractState> {
@@ -101,15 +93,27 @@ mod actions {
                     break;
                 }
 
-                let mut user_cont = 0;
+                let mut user_count = 0;
                 loop {
-                    if user_cont == initial_positions.len() {
+                    if user_count == initial_positions.len() {
                         break;
                     }
+                    let character = *initial_positions.at(user_count);
+
+                    // Check if the move collides
+                    let is_collision = does_collide(character);
+                    if !is_collision {
+                        //Move character
+                    }
+
+                    // Check if shot
                 };
+
+                // Simulete Bullets
 
                 step_count += 1;
             }
         }
     }
 }
+
