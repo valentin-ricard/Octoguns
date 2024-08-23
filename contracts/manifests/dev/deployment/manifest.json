@@ -1982,6 +1982,7 @@
         }
       ],
       "tag": "dojo_starter-DirectionsAvailable",
+      "qualified_path": "dojo_starter::models::directions_available",
       "manifest_name": "dojo_starter-DirectionsAvailable-77844f1f"
     },
     {
@@ -2434,6 +2435,7 @@
         }
       ],
       "tag": "dojo_starter-Moved",
+      "qualified_path": "dojo_starter::systems::actions::actions::moved",
       "manifest_name": "dojo_starter-Moved-504403e5"
     },
     {
@@ -2918,6 +2920,7 @@
         }
       ],
       "tag": "dojo_starter-Moves",
+      "qualified_path": "dojo_starter::models::moves",
       "manifest_name": "dojo_starter-Moves-2a29373f"
     },
     {
@@ -3358,6 +3361,7 @@
         }
       ],
       "tag": "dojo_starter-Position",
+      "qualified_path": "dojo_starter::models::position",
       "manifest_name": "dojo_starter-Position-2ac8b4c1"
     }
   ]

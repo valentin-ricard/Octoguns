@@ -19,6 +19,7 @@ export type IWorld = Awaited<ReturnType<typeof setupWorld>>;
 export async function setupWorld(provider: DojoProvider, _config: Config) {
     const actions = () => ({
         spawn: async ({ account }: { account: AccountInterface }) => {
+            console.log(account);
             try {
                 return await provider.execute(
                     account,

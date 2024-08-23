@@ -124,5 +124,6 @@ export async function setup({ ...config }: Config) {
         rpcProvider,
         sync,
         account,
+        toriiClient
     };
 }
