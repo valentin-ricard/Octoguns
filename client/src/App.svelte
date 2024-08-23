@@ -2,25 +2,15 @@
 
 	import { dojoStore, modelsStore } from "./stores";
 	import { get } from "svelte/store";
-	import { Direction } from "./dojo/utils";
+	import { SetupResult } from "./dojo/setup";
 
-	let {
-        client,
-        clientModels,
-        contractComponents,
-        systemCalls,
-        config,
-        world,
-        burnerManager,
-        rpcProvider,
-        sync,
-        account,
-		toriiClient
-	} = get(dojoStore);
+	const dojo = get(dojoStore);
+	let {startCreate, startJoin, spawn} = dojo.systemCalls;
+	let account = dojo.burnerManager.account;
 
 	let {models} = get(modelsStore);
 
-	let address = burnerManager.account?.address;
+	let address = dojo.burnerManager.account?.address;
 	console.log(models);
 
 
@@ -29,7 +19,9 @@
 
 <main>
 	<h1>Hello {address}!</h1>
-	
+	<button on:click = {() => (account ? startCreate(account) : console.log("no account") )}> 
+		spawn 
+	</button>
 
 
 </main>

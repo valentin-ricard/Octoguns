@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import { IDojo } from "./dojo/setup";
+import { SetupResult } from "./dojo/setup";
 
-export const dojoStore = writable<IDojo>();
+export const dojoStore = writable<SetupResult>();
 export const modelsStore = writable<any>();
