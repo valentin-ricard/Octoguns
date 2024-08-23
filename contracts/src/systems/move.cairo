@@ -94,6 +94,22 @@ mod actions {
 
                 char_index += 1;
             };
+
+            let mut step_count = 0;
+            loop {
+                if step_count >= 100_u32 {
+                    break;
+                }
+
+                let mut user_cont = 0;
+                loop {
+                    if user_cont == initial_positions.len() {
+                        break;
+                    }
+                };
+
+                step_count += 1;
+            }
         }
     }
 }
