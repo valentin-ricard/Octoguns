@@ -24,3 +24,12 @@ struct Vec3 {
     y: u32,
     z: u32,
 } 
+
+#[derive(Drop, Serde)]
+#[dojo::model]
+pub struct Bullet {
+    #[key]
+    pub bullet_id: u32,
+    pub coords: Vec3,
+    pub speed: u32, // pixels per step
+}

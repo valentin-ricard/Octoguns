@@ -1,6 +1,7 @@
 mod systems {
     mod start; 
     mod spawn;
+    mod move;
 }
 
 mod models {
