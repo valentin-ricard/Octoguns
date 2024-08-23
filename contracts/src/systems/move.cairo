@@ -33,7 +33,7 @@ mod actions {
     use octoguns::models::sessions::{Session};
     use octoguns::models::character::{Character, Position};
     use octoguns::lib::moveChecks::{CharacterPosition, does_collide};
-    use octoguns::lib::dataCollect::{get_character_ids};
+    use octoguns::lib::data_mover::data_mover::{get_character_ids, store_character_positions};
     use starknet::{ContractAddress, get_caller_address};
     use array::ArrayTrait;
 
@@ -42,34 +42,19 @@ mod actions {
         fn move(ref world: IWorldDispatcher, moves: Array<CharacterMove>) {
             assert(moves.len() <= 3, 'Invalid number of moves');
 
-            let caller = get_caller_address();
-
-            // Create an array to store initial positions
-            let mut initial_positions: Array<CharacterPosition> = ArrayTrait::new();
-
             // Collect all unique character IDs from all moves
             let all_character_ids = get_character_ids(moves);
 
-            // Get initial positions for all characters
-            let mut char_index = 0;
-            loop {
-                if char_index >= all_character_ids.len() {
-                    break;
-                }
-                let character_id = *all_character_ids.at(char_index);
-                
-                // Retrieve the Character and Position structs from the world
-                let character = get!(world, character_id, (Character));
-                let position = get!(world, character_id, (Position));
-
-                // Validate that the caller owns this character
-                assert(character.player_id == caller, 'Not character owner');
-
-                // Store the initial position in our array
-                initial_positions.append(CharacterPosition { id: character_id, x: position.x, y: position.y, max_steps: character.steps_amount, current_step: 0 });
-
-                char_index += 1;
-            };
+            // Create an array to store initial positions
+            // @Note initial_position struct: Array<CharacterPosition>
+            // pub struct CharacterPosition {
+            //     pub id: u32,
+            //     pub x: u16,
+            //     pub y: u16,
+            //     pub max_steps: u32,
+            //     pub current_step: u32,
+            // }
+            let initial_positions = store_character_positions(world, all_character_ids);
 
             let mut step_count = 0;
             loop {
@@ -83,6 +68,8 @@ mod actions {
                         break;
                     }
                     let character = *initial_positions.at(user_count);
+
+                    // TODO check if can play
 
                     // Check if the move collides
                     let is_collision = does_collide(character);
