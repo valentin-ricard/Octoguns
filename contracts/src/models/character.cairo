@@ -8,15 +8,18 @@ pub struct Character {
     pub steps_amount: u32, // The amount of acion s this character can submit
 }
 
+
+// 10 000 x 10 000 x 10 000 map (high level position)
 #[derive(Copy, Drop, Serde)]
 #[dojo::model]
 pub struct Position {
     #[key]
     pub entity_id: u32, 
-    pub x: u8,
-    pub y: u8,
-    pub z: u8,
+    pub x: u16, 
+    pub y: u16,
+    pub z: u16,
 }
+
 #[derive(Copy, Drop, Serde)]
 #[dojo::model]
 struct Camera {
