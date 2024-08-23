@@ -9,3 +9,6 @@ mod models {
     mod character;
 }
 
+mod lib {
+    mod defaultSpawns;
+}

@@ -2,32 +2,35 @@
 #[dojo::model]
 pub struct Character {
     #[key]
-    pub entity_id: u8,
+    pub entity_id: u32,
     pub session_id: u32,
-    pub player_id: bool,
+    pub player_id: u8,
+    pub steps_amount: u32, // The amount of acion s this character can submit
 }
 
 #[derive(Copy, Drop, Serde)]
-struct Position {
+#[dojo::model]
+pub struct Position {
     #[key]
-    entity_id: u32, 
-    x: u32,
-    y: u32,
-    z: u32,
+    pub entity_id: u32, 
+    pub x: u8,
+    pub y: u8,
+    pub z: u8,
 }
- 
 #[derive(Copy, Drop, Serde)]
+#[dojo::model]
 struct Camera {
     #[key]
-    entity_id: u32,
-    pitch: u8,
-    yaw: u8,
-    roll: u8,
+    pub entity_id: u32,
+    pub pitch: u8,
+    pub yaw: u8,
+    pub roll: u8,
 }
 
 #[derive(Copy, Drop, Serde)]
+#[dojo::model]
 struct Health {
     #[key]
-    entity_id: u32,
-    health: u8,
+    pub entity_id: u32,
+    pub health: u8,
 }
