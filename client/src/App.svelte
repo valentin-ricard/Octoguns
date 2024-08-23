@@ -2,7 +2,7 @@
 
 	import { dojoStore, modelsStore } from "./stores";
 	import { get } from "svelte/store";
-	import { SetupResult } from "./dojo/setup";
+    import SceneCanvas from "./components/SceneCanvas.svelte";
 
 	const dojo = get(dojoStore);
 	let {startCreate, startJoin, spawn} = dojo.systemCalls;
@@ -13,17 +13,12 @@
 	let address = dojo.burnerManager.account?.address;
 	console.log(models);
 
-
-
 </script>
 
 <main>
-	<h1>Hello {address}!</h1>
-	<button on:click = {() => (account ? startCreate(account) : console.log("no account") )}> 
-		spawn 
-	</button>
-
-
+	<div class = "canvas" >
+		<SceneCanvas />
+	<div>
 </main>
 
 <style lang="scss">
@@ -42,6 +37,12 @@
 
 		@media (min-width: 640px) {
 			max-width: none;
+		}
+
+		.canvas {
+			justify-content: center;
+			align-content: center;
+			align-items: center;
 		}
 	}
 </style>
