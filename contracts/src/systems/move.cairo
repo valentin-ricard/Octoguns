@@ -44,6 +44,8 @@ mod actions {
         fn move(ref world: IWorldDispatcher, session_id: u32, moves: Array<CharacterMove>) {
             assert(moves.len() <= 3, 'Invalid number of moves');
 
+            // @TODO: Check if its the players turn
+
             // Collect all unique character IDs from all moves
             let all_character_ids = get_character_ids(moves);
 

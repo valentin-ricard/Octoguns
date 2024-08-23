@@ -68,7 +68,7 @@ mod data_mover {
             let bullet_id = *bullets.at(i);
             let bullet = get!(world, bullet_id, (Bullet));
 
-            all_live_bullets.append(Bullet {bullet_id: bullet_id, coords: bullet.coords, speed: bullet.speed});
+            all_live_bullets.append(Bullet {bullet_id: bullet_id, coords: bullet.coords, speed: bullet.speed, direction: bullet.direction});
         };
 
         return all_live_bullets;

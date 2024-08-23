@@ -31,4 +31,5 @@ pub struct Bullet {
     pub bullet_id: u32,
     pub coords: Vec2,
     pub speed: u32, // pixels per step
+    pub direction: u32, // in degrees
 }
