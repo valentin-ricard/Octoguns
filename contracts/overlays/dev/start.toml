@@ -1,0 +1,11 @@
+tag = "octoguns-start"
+writes = [
+    "octoguns-Position",
+    "octoguns-Character",
+    "octoguns-Health",
+    "octoguns-Camera",
+    "octoguns-Map",
+    "octoguns-MapObjects",
+    "octoguns-Session",
+
+]
