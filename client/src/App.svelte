@@ -29,18 +29,7 @@
 
 <main>
 	<h1>Hello {address}!</h1>
-	<div> </div>
-	<button on:click={() => systemCalls.spawn(account)}> Spawn </button>
-	<div > 
-		<button on:click={() => systemCalls.move(account, Direction.Up)}> Up </button>
-	<div/>	
-	<div> 
-		<button on:click={() => systemCalls.move(account, Direction.Left)}> Left </button>
-		<button on:click={() => systemCalls.move(account, Direction.Right)}> Right </button>
-	<div/>	
-	<div > 
-		<button on:click={() => systemCalls.move(account, Direction.Down)}> Down </button>
-	<div/>	
+	
 
 
 </main>

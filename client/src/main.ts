@@ -5,6 +5,7 @@ import { dojoStore, modelsStore } from './stores.ts';
 
 let result= await setup(dojoConfig);
 let models = await result.toriiClient.getAllEntities(1000, 0);
+
 modelsStore.set(models);
 dojoStore.set(result);
 

@@ -1,16 +1,21 @@
 import { overridableComponent } from "@dojoengine/recs";
-import { ContractComponents } from "./defineContractComponents";
+import { defineContractComponents } from "./bindings/typescript/models.gen";
 
 export type ClientComponents = ReturnType<typeof createClientComponents>;
 
 export function createClientComponents({
     contractComponents,
 }: {
-    contractComponents: ContractComponents;
+    contractComponents: Awaited<ReturnType<typeof defineContractComponents>>;
 }) {
     return {
         ...contractComponents,
+        Camera: overridableComponent(contractComponents.Camera),
+        Character: overridableComponent(contractComponents.Character),
+        Health: overridableComponent(contractComponents.Health),
+        Map: overridableComponent(contractComponents.Map),
+        MapObjects: overridableComponent(contractComponents.MapObjects),
+        Session: overridableComponent(contractComponents.Session),
         Position: overridableComponent(contractComponents.Position),
-        Moves: overridableComponent(contractComponents.Moves),
     };
 }
