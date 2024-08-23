@@ -1,0 +1,27 @@
+{
+	"extends": "@tsconfig/svelte/tsconfig.json",
+	"compilerOptions": {
+		"target": "esnext",
+		"importsNotUsedAsValues": "remove",
+		"isolatedModules": true,
+		"allowJs": true,
+		"checkJs": true,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"baseUrl": ".",
+		"paths": {
+			"src/*": ["src/*"]
+		}
+	},
+	"include": [
+		"src/**/*.d.ts",
+		"src/**/*.ts",
+		"src/**/*.svelte"
+	],
+	"references": [
+		{
+			"path": "./tsconfig.node.json"
+		}
+	]
+}
