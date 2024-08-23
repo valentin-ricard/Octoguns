@@ -16,5 +16,5 @@ pub struct Session {
 pub struct SessionMeta {
     #[key]
     pub session_id: u32,
-    pub turn_count: u32, // mod 2 = 1 is player 2 and mod 2 = 1 is player 1
+    pub turn_count: u32, // mod 2 = 1 is player 2 and mod 2 = 0 is player 1
 }
