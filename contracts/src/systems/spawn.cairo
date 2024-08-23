@@ -17,6 +17,7 @@ mod spawn {
             let positions_1 = generate_character_positions(1);
             let positions_2 = generate_character_positions(2);
             let session = get!(world, session_id, (Session));
+            let caller = get_caller_address();
 
             let mut i = 0;
             loop {
@@ -34,7 +35,7 @@ mod spawn {
                         Character {
                             entity_id: id1,
                             session_id: session_id,
-                            player_id: 1,
+                            player_id: caller,
                             steps_amount: default_steps, 
                         },
                         Position {
@@ -63,7 +64,7 @@ mod spawn {
                         Character {
                             entity_id: id2,
                             session_id: session_id,
-                            player_id: 2,
+                            player_id: caller,
                             steps_amount: default_steps, 
                         },
                         Position {
