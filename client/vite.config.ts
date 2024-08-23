@@ -25,6 +25,8 @@ import legacy from '@vitejs/plugin-legacy';
 import autoprefixer from 'autoprefixer';
 import pkg from './package.json';
 import tsconfig from './tsconfig.json';
+import wasm from "vite-plugin-wasm";
+import topLevelAwait from "vite-plugin-top-level-await";
 
 const production = process.env.NODE_ENV === 'production';
 const config = <UserConfig> defineConfig({
@@ -33,6 +35,7 @@ const config = <UserConfig> defineConfig({
 			emitCss: production,
 			preprocess: sveltePreprocess(),
 		}),
+		wasm(), topLevelAwait()
 	],
 	server: {
 		host: 'localhost',

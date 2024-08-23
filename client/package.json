@@ -20,5 +20,15 @@
 	},
 	"browserslist": [
 		"defaults"
-	]
+	],
+	"dependencies": {
+		"@dojoengine/core": "^1.0.0-alpha.7",
+		"@dojoengine/create-burner": "^1.0.0-alpha.7",
+		"@dojoengine/state": "^1.0.0-alpha.7",
+		"@dojoengine/torii-client": "^1.0.0-alpha.7",
+		"@dojoengine/torii-wasm": "^1.0.0-alpha.7",
+		"@dojoengine/utils": "^1.0.0-alpha.7",
+		"vite-plugin-top-level-await": "^1.4.4",
+		"vite-plugin-wasm": "^3.3.0"
+	}
 }
