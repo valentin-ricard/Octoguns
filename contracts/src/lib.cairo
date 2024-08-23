@@ -1,9 +1,14 @@
 mod systems {
-    mod actions;
+    mod start; 
+    mod spawn;
 }
 
-mod models;
+mod models {
+    mod sessions;
+    mod map;
+    mod character;
+}
 
-mod tests {
-    mod test_world;
+mod lib {
+    mod defaultSpawns;
 }
