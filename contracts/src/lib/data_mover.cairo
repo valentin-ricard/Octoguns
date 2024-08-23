@@ -3,6 +3,8 @@ mod data_mover {
 
     use octoguns::systems::move::{CharacterMove, CharacterPosition};
     use octoguns::models::character::{Position, Character};
+    use octoguns::models::map::{Bullet};
+    use octoguns::models::sessions::{SessionMeta};
     use starknet::{ContractAddress, get_caller_address};
 
     fn get_character_ids(moves: Array<CharacterMove>) -> Array<u32> {
@@ -51,5 +53,24 @@ mod data_mover {
             char_index += 1;
         };
         return initial_positions;
+    }
+
+    fn get_all_bullets(world: IWorldDispatcher, session_id: u32) -> Array<Bullet> {
+        let mut all_live_bullets: Array<Bullet> = ArrayTrait::new();
+        let session_meta = get!(world, session_id, (SessionMeta));
+        let bullets = session_meta.bullets; //  type: array<u32>
+
+        let mut i = 0;
+        loop {
+            if i >= bullets.len() {
+                break;
+            }
+            let bullet_id = *bullets.at(i);
+            let bullet = get!(world, bullet_id, (Bullet));
+
+            all_live_bullets.append(Bullet {bullet_id: bullet_id, coords: bullet.coords, speed: bullet.speed});
+        };
+
+        return all_live_bullets;
     }
 }

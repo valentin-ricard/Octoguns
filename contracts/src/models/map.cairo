@@ -13,16 +13,15 @@ pub struct Map {
 pub struct MapObjects {
     #[key]
     pub map_object_id: u32,
-    pub dimensions: Vec3,
-    pub coords: Vec3, 
+    pub dimensions: Vec2,
+    pub coords: Vec2, 
 }
 
 
 #[derive(Drop, Serde, Introspect)]
-struct Vec3 {
+struct Vec2 {
     x: u32,
     y: u32,
-    z: u32,
 } 
 
 #[derive(Drop, Serde)]
@@ -30,6 +29,6 @@ struct Vec3 {
 pub struct Bullet {
     #[key]
     pub bullet_id: u32,
-    pub coords: Vec3,
+    pub coords: Vec2,
     pub speed: u32, // pixels per step
 }
