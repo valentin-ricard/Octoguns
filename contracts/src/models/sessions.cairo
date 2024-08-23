@@ -8,6 +8,6 @@ pub struct Session {
     pub player1: ContractAddress,
     pub player2: ContractAddress,
     pub map_id: u32,
-    pub winner: bool,
+    pub state: u8, // 0: waiting for seconde player. 1 in game, 2 ended.
 }
 
