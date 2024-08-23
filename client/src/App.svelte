@@ -1,10 +1,28 @@
 <script lang="ts">
-	let name: string = 'world';
+
+	import { dojoStore } from "./stores";
+	import { get } from "svelte/store";
+
+	let {
+        client,
+        clientModels,
+        contractComponents,
+        systemCalls,
+        config,
+        world,
+        burnerManager,
+        rpcProvider,
+        sync,
+        account,
+	} = get(dojoStore);
+
+	let address = burnerManager.account?.address;
+	console.log(address);
+
 </script>
 
 <main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+	<h1>Hello {address}!</h1>
 </main>
 
 <style lang="scss">
