@@ -40,6 +40,8 @@ mod actions {
         id: u32,
         x: u16,
         y: u16,
+        max_steps: u32,
+        current_step: u32,
     }
 
     #[abi(embed_v0)]
@@ -88,7 +90,7 @@ mod actions {
                 assert(character.player_id == caller, 'Not character owner');
 
                 // Store the initial position in our array
-                initial_positions.append(CharacterPosition { id: character_id, x: position.x, y: position.y });
+                initial_positions.append(CharacterPosition { id: character_id, x: position.x, y: position.y, max_steps: character.steps_amount, current_step: 0 });
 
                 char_index += 1;
             };
