@@ -4,7 +4,7 @@ trait ISpawn {
 }
 
 #[dojo::contract]
-mod start {
+mod spawn {
     use super::ISpawn;
     use octoguns::models::sessions::{Session};
     use octoguns::models::character::{Character, Position, Camera, Health};
