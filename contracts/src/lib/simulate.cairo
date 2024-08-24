@@ -1,6 +1,7 @@
 use octoguns::models::bullet::{Bullet};
 use octoguns::types::{Vec2, CharacterPosition};
 use alexandria_math::trigonometry::{fast_cos, fast_sin};
+use octoguns::consts::TEN_E_8;
 
 // Tuple to hold both bullets and character positions
 pub type SimulationResult = (Array<Bullet>, Array<u32>);
@@ -43,8 +44,8 @@ pub fn simulate_bullet(mut bullet: Bullet, character_positions: @Array<Character
         return (Option::None(()), character_id);
     }
 
-    let x_shift = (fast_sin(direction) * speed) / 100_000_000;
-    let y_shift = (fast_cos(direction) * speed) / 100_000_000;
+    let x_shift = (fast_sin(direction) * speed) / TEN_E_8;
+    let y_shift = (fast_cos(direction) * speed) / TEN_E_8;
 
     let new_position_x = position_x + x_shift;
     let new_position_y = position_y + y_shift;
