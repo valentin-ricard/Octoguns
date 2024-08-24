@@ -1,6 +1,7 @@
 mod systems {
     mod start; 
     mod spawn;
+    mod move;
 }
 
 mod models {
@@ -11,4 +12,6 @@ mod models {
 
 mod lib {
     mod defaultSpawns;
+    mod moveChecks;
+    mod data_mover;
 }

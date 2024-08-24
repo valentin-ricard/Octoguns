@@ -16,6 +16,8 @@ mod spawn {
         fn spawn(ref world: IWorldDispatcher, session_id: u32) {
             let positions_1 = generate_character_positions(1);
             let positions_2 = generate_character_positions(2);
+            let session = get!(world, session_id, (Session));
+            let caller = get_caller_address();
 
             let mut i = 0;
             loop {
@@ -33,7 +35,7 @@ mod spawn {
                         Character {
                             entity_id: id1,
                             session_id: session_id,
-                            player_id: 1,
+                            player_id: caller,
                             steps_amount: default_steps, 
                         },
                         Position {
@@ -62,7 +64,7 @@ mod spawn {
                         Character {
                             entity_id: id2,
                             session_id: session_id,
-                            player_id: 2,
+                            player_id: caller,
                             steps_amount: default_steps, 
                         },
                         Position {
@@ -83,6 +85,14 @@ mod spawn {
                         }
                     )
                 );
+
+                set!(world, Session {
+                    session_id: session_id,
+                    player1: session.player1,
+                    player2: session.player2,
+                    map_id: session.map_id,
+                    state: 2, // ready to start 
+                });    
 
                 i += 1;
             }  
