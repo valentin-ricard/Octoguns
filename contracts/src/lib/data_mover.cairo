@@ -1,7 +1,7 @@
 #[dojo::contract]
 mod data_mover {
 
-    use octoguns::systems::move::{CharacterMove, CharacterPosition};
+    use octoguns::systems::move::{CharacterMove, CharacterPosition, CharacterPositionTrait};
     use octoguns::models::character::{Position, Character};
     use octoguns::models::map::{Bullet};
     use octoguns::models::sessions::{SessionMeta};
@@ -29,7 +29,7 @@ mod data_mover {
         return all_character_ids;
     }
 
-    fn store_character_positions(world: IWorldDispatcher, all_character_ids: Array<u32>) -> Array<CharacterPosition> {
+    fn get_character_positions(world: IWorldDispatcher, all_character_ids: Array<u32>) -> Array<CharacterPosition> {
         let mut initial_positions: Array<CharacterPosition> = ArrayTrait::new();
         let caller = get_caller_address();
 
@@ -47,12 +47,12 @@ mod data_mover {
             // Validate that the caller owns this character
             assert(character.player_id == caller, 'Not character owner');
 
+            let character_positon = CharacterPositionTrait::new(character_id, position.x, position.y, character.steps_amount, 0 );
             // Store the initial position in our array
-            initial_positions.append(CharacterPosition { id: character_id, x: position.x, y: position.y, max_steps: character.steps_amount, current_step: 0 });
-
+            positions.append(character_positon);
             char_index += 1;
         };
-        return initial_positions;
+        return positions;
     }
 
     fn get_all_bullets(world: IWorldDispatcher, session_id: u32) -> Array<Bullet> {
@@ -68,7 +68,7 @@ mod data_mover {
             let bullet_id = *bullets.at(i);
             let bullet = get!(world, bullet_id, (Bullet));
 
-            all_live_bullets.append(Bullet {bullet_id: bullet_id, coords: bullet.coords, speed: bullet.speed, direction: bullet.direction});
+            all_live_bullets.append(bullet);
         };
 
         return all_live_bullets;

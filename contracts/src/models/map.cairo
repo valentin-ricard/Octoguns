@@ -33,3 +33,13 @@ pub struct Bullet {
     pub speed: i64, // pixels per step
     pub direction: i64, // in degrees
 }
+
+
+#[generate_trait]
+impl BulletImpl of BulletTrait {
+
+    fn new(id: u32, coords: Vec2, speed: i64, direction: i64) -> Bullet {
+        Bullet { bullet_id: id, coords, speed, direction}
+    }
+
+}

@@ -43,8 +43,8 @@ pub fn simulate_bullet(mut bullet: Bullet, character_positions: @Array<Character
         return (Option::None(()), character_id);
     }
 
-    let x_shift = fast_sin(direction) * speed / 100_000_000;
-    let y_shift = fast_cos(direction) * speed / 100_000_000;
+    let x_shift = (fast_sin(direction) * speed) / 100_000_000;
+    let y_shift = (fast_cos(direction) * speed) / 100_000_000;
 
     let new_position_x = position_x + x_shift;
     let new_position_y = position_y + y_shift;
@@ -86,4 +86,55 @@ pub fn compute_bullet_hits(bullet_position_x: i64, bullet_position_y: i64, chara
     };
 
     character_id
+}
+
+#[cfg(test)]
+mod simulate_tests {
+
+    use octoguns::models::map::{Bullet, BulletTrait};
+    use octoguns::models::map::{Vec2};
+    use super::{simulate_bullet, simulate_bullets};
+
+    #[test]
+   fn test_bullet_sim_y_only()  {
+        let bullet = BulletTrait::new(1, Vec2 { x:3, y:0}, 1, 0);
+        let res = simulate_bullet(bullet);
+        match res {
+            Option::None => {
+                panic!("Should not be none");
+            },
+            Option::Some(bullet) => {
+                assert!(bullet.coords.y == 1, "y should have changed");
+                assert!(bullet.coords.x == 3, "x should not have changed")
+            }
+        }
+    }
+
+    #[test]
+    fn test_bullet_sim_x_only()  {
+         let bullet = BulletTrait::new(1, Vec2 { x:3, y:0}, 1, 90 * 100_000_000);
+         let res = simulate_bullet(bullet);
+         match res {
+             Option::None => {
+                 panic!("Should not be none");
+             },
+             Option::Some(bullet) => {
+                println!("x: {}, y: {}", bullet.coords.x, bullet.coords.y);
+                 assert!(bullet.coords.x == 4, "x should have changed");
+                 assert!(bullet.coords.y == 0, "y should not have changed");
+             }
+         }
+     }
+
+     #[test]
+    fn test_4_bullets_sim()  {
+        let bullet_1 = BulletTrait::new(1, Vec2 { x:3, y:0}, 1, 180);
+        let bullet_2 = BulletTrait::new(1, Vec2 { x:3, y:5}, 3, 74);
+        let bullet_3 = BulletTrait::new(1, Vec2 { x:6, y:1}, 4, 27);
+        let bullet_4 = BulletTrait::new(1, Vec2 { x:3, y:0}, -1, -90);
+    
+        let bullets = array![bullet_1, bullet_2, bullet_3, bullet_4];
+        let res = simulate_bullets(bullets);
+         
+     }
 }
