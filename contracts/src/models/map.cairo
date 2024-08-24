@@ -18,18 +18,18 @@ pub struct MapObjects {
 }
 
 
-#[derive(Drop, Serde, Introspect)]
+#[derive(Copy, Drop, Serde, Introspect)]
 struct Vec2 {
-    x: u32,
-    y: u32,
+    x: i64,
+    y: i64,
 } 
 
-#[derive(Drop, Serde)]
+#[derive(Copy, Drop, Serde)]
 #[dojo::model]
 pub struct Bullet {
     #[key]
     pub bullet_id: u32,
     pub coords: Vec2,
-    pub speed: u32, // pixels per step
-    pub direction: u32, // in degrees
+    pub speed: i64, // pixels per step
+    pub direction: i64, // in degrees
 }

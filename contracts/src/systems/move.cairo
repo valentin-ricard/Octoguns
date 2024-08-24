@@ -36,6 +36,7 @@ mod actions {
     use octoguns::models::map::{Bullet};
     use octoguns::lib::moveChecks::{CharacterPosition, does_collide, check_valid_movement};
     use octoguns::lib::data_mover::data_mover::{get_character_ids, store_character_positions, get_all_bullets};
+    use octoguns::lib::simulate::{simulate_bullets, compute_bullet_hits};
     use starknet::{ContractAddress, get_caller_address};
     use array::ArrayTrait;
 
@@ -59,9 +60,9 @@ mod actions {
             //     pub max_steps: u32,
             //     pub current_step: u32,
             // }
-            let initial_positions = store_character_positions(world, all_character_ids);
+            let mut initial_positions = store_character_positions(world, all_character_ids);
 
-            let bullets = get_all_bullets(world, session_id);
+            let mut bullets = get_all_bullets(world, session_id);
 
             let mut step_count = 0;
             loop {
@@ -70,22 +71,25 @@ mod actions {
                 }
                 let mut user_count = 0;
                 moves = moves_clone.clone();
+                let mut updated_positions = ArrayTrait::new();
                 loop {
-                    let character_move = moves.pop_front().unwrap(); 
 
                     if user_count == initial_positions.len() {
                         break;
                     }
-                    let character = *initial_positions.at(user_count);
+                    let character_move = moves.pop_front().unwrap(); 
+
+                    let mut character = *initial_positions.at(user_count);
 
                     // check character is out of moves
                     if character.current_step >= character.max_steps {
+                        updated_positions.append(character);
+                        user_count += 1;    
                         break;
                     }
 
                     // TODO Check if move is valid
                     //Get movement vector
-                    let character_id = *character_move.character_ids.at(user_count); // Access the character ID
                     let movement = *character_move.movement.at(user_count); 
                     let movement_x = movement.x;
                     let movement_y = movement.y;
@@ -93,19 +97,33 @@ mod actions {
                     //Checks if the move is not to big
                     let is_vaild = check_valid_movement(movement_x, movement_y);
                     if !is_vaild {
+                        updated_positions.append(character);
+                        user_count += 1;
                         break;
                     }
 
-                    // Check if the move collides
+                    // TODO Check if the move collides
                     let is_collision = does_collide(character);
                     if !is_collision {
                         //Move character
+                        character.x = (character.x + movement_x);
+                        character.y = (character.y + movement_y);
+                        character.current_step += 1;
                     }
+                    updated_positions.append(character);
+                    user_count += 1;
 
                     // TODO Check if shot
+                    let is_shot = compute_bullet_hits(ref bullets, character);
+                    if is_shot {
+                        //TODO Handle kill
+                    }
                 };
+                // Replace initial_positions with updated_positions
+                initial_positions = updated_positions;
 
                 // TODO Simulete Bullets
+                bullets = simulate_bullets(bullets);
 
                 step_count += 1;
             }
