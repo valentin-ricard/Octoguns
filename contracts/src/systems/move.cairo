@@ -35,7 +35,7 @@ mod actions {
     use octoguns::models::character::{Character, Position};
     use octoguns::models::map::{Bullet};
     use octoguns::lib::moveChecks::{CharacterPosition, does_collide, check_valid_movement};
-    use octoguns::lib::data_mover::data_mover::{get_character_ids, store_character_positions, get_all_bullets};
+    use octoguns::lib::data_mover::data_mover::{get_character_ids, get_character_positions, get_all_bullets};
     use octoguns::lib::simulate::{simulate_bullets, compute_bullet_hits};
     use starknet::{ContractAddress, get_caller_address};
     use array::ArrayTrait;
@@ -71,7 +71,7 @@ mod actions {
             //     pub max_steps: u32,
             //     pub current_step: u32,
             // }
-            let mut initial_positions = store_character_positions(world, all_character_ids);
+            let mut initial_positions = get_character_positions(world, all_character_ids);
 
             let mut bullets = get_all_bullets(world, session_id);
 

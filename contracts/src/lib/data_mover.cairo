@@ -1,7 +1,8 @@
 #[dojo::contract]
 mod data_mover {
 
-    use octoguns::systems::move::{CharacterMove, CharacterPosition, CharacterPositionTrait};
+    use octoguns::systems::move::{CharacterMove};
+    use octoguns::lib::moveChecks::{CharacterPosition, CharacterPositionTrait};
     use octoguns::models::character::{Position, Character};
     use octoguns::models::map::{Bullet};
     use octoguns::models::sessions::{SessionMeta};
@@ -47,12 +48,12 @@ mod data_mover {
             // Validate that the caller owns this character
             assert(character.player_id == caller, 'Not character owner');
 
-            let character_positon = CharacterPositionTrait::new(character_id, position.x, position.y, character.steps_amount, 0 );
+            let position = CharacterPositionTrait::new(character_id, position.x, position.y, character.steps_amount, 0 );
             // Store the initial position in our array
-            positions.append(character_positon);
+            initial_positions.append(position);
             char_index += 1;
         };
-        return positions;
+        return initial_positions;
     }
 
     fn get_all_bullets(world: IWorldDispatcher, session_id: u32) -> Array<Bullet> {
