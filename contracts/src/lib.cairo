@@ -14,4 +14,5 @@ mod lib {
     mod defaultSpawns;
     mod moveChecks;
     mod data_mover;
+    mod simulate;
 }
