@@ -156,4 +156,19 @@ mod simulate_tests {
         let res = simulate_bullets(ref bullets, ref characters);
          
      }
+
+     #[test]
+     fn test_collision() {
+        let bullet = BulletTrait::new(1, Vec2 { x:3, y:0}, 1, 0);
+        let characters = array![CharacterPositionTrait::new(69,4,0,100,0)];
+        let (res, id) = simulate_bullet(bullet, @characters);
+        match res {
+            Option::None => {
+                assert!(id == 69, "not returning id of hit piece");
+            },
+            Option::Some(bullet) => {
+                panic!("bullet should have collided");
+            }
+        }
+     }
 }
