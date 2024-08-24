@@ -5,8 +5,8 @@ use octoguns::models::map::{Bullet};
 
 #[derive(Copy, Drop, Serde)]
 struct Vector2 {
-    x: i16,
-    y: i16,
+    x: i64,
+    y: i64,
 }
 
 #[derive(Copy, Drop, Serde)]
@@ -112,18 +112,12 @@ mod actions {
                     }
                     updated_positions.append(character);
                     user_count += 1;
-
-                    // TODO Check if shot
-                    let is_shot = compute_bullet_hits(ref bullets, character);
-                    if is_shot {
-                        //TODO Handle kill
-                    }
                 };
                 // Replace initial_positions with updated_positions
                 initial_positions = updated_positions;
 
                 // TODO Simulete Bullets
-                bullets = simulate_bullets(bullets);
+                bullets = simulate_bullets(bullets, ref initial_positions);
 
                 step_count += 1;
             }

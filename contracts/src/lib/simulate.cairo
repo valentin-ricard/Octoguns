@@ -15,17 +15,15 @@ use alexandria_math::trigonometry::{fast_cos, fast_sin};
 
 
 // TO DO The bullet simpulation
-pub fn simulate_bullets(mut bullets: Array<Bullet>) -> Array<Bullet> {
-    let mut bullet_counter = 0;
+pub fn simulate_bullets(mut bullets: Array<Bullet>, ref character_positions: Array<CharacterPosition>) -> Array<Bullet> {
     let mut updated_bullets = ArrayTrait::new();
     loop {
-        if bullet_counter >= bullets.len() {
-            break;
-        }
-        let new_bullet_position = simulate_bullet(bullets.pop_front().unwrap());
-        match new_bullet_position {
+        match bullets.pop_front() {
             Option::Some(bullet) => {
-                updated_bullets.append(bullet);
+                match simulate_bullet(bullet, @character_positions) {
+                    Option::Some(updated_bullet) => updated_bullets.append(updated_bullet),
+                    Option::None => {},
+                }
             },
             Option::None => {
                 break;
@@ -35,13 +33,15 @@ pub fn simulate_bullets(mut bullets: Array<Bullet>) -> Array<Bullet> {
     updated_bullets
 }
 
-pub fn simulate_bullet(mut bullet: Bullet) -> Option<Bullet> {
+pub fn simulate_bullet(mut bullet: Bullet, character_positions: @Array<CharacterPosition>) -> Option<Bullet> {
 
     let position = bullet.coords;
     let position_x = position.x; // i64
     let position_y = position.y; // i64
     let speed = bullet.speed; // in pixels per step
     let direction = bullet.direction; // in degrees from 0 to 259
+
+    let is_charater_hit = compute_bullet_hits(position_x, position_y, character_positions);
 
     let x_shift = fast_sin(direction) * speed / 100_000_000;
     let y_shift = fast_cos(direction) * speed / 100_000_000;
@@ -58,6 +58,32 @@ pub fn simulate_bullet(mut bullet: Bullet) -> Option<Bullet> {
     return Option::Some(bullet);
 }
 
-pub fn compute_bullet_hits(ref bullets: Array<Bullet>, character: CharacterPosition) -> bool {
-    return false;
+pub fn compute_bullet_hits(bullet_position_x: i64, bullet_position_y: i64, characters: @Array<CharacterPosition>) -> bool {
+    let mut character_index = 0;
+    let mut hit_detected = false;
+
+    loop {
+        if character_index >= characters.len() {
+            break;
+        }
+
+        let character = characters.at(character_index);
+        let character_position_x = *character.x;
+        let character_position_y = *character.y;
+
+        let lower_bound_x = character_position_x - 5;
+        let upper_bound_x = character_position_x + 5;
+        let lower_bound_y = character_position_y - 5;
+        let upper_bound_y = character_position_y + 5;
+
+        if bullet_position_x >= lower_bound_x && bullet_position_x <= upper_bound_x &&
+           bullet_position_y >= lower_bound_y && bullet_position_y <= upper_bound_y {
+            hit_detected = true;
+            break; // Exit the loop if a hit is detected
+        }
+
+        character_index += 1;
+    };
+
+    hit_detected // Return the result
 }

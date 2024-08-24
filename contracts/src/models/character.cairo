@@ -17,9 +17,9 @@ pub struct Character {
 pub struct Position {
     #[key]
     pub entity_id: u32, 
-    pub x: i16, 
-    pub y: i16,
-    pub z: i16,
+    pub x: i64, 
+    pub y: i64,
+    pub z: i64,
 }
 
 #[derive(Copy, Drop, Serde)]
