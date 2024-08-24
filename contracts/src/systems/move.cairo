@@ -17,7 +17,7 @@ mod move {
     use octoguns::models::sessions::{Session, SessionMeta};
     use octoguns::models::character::{Character, Position};
     use octoguns::models::bullet::{Bullet};
-    use octoguns::lib::data_mover::data_mover::{get_character_ids, get_character_positions, get_all_bullets};
+    use octoguns::lib::helpers::{get_character_ids, get_character_positions, get_all_bullets, check_is_character_owner};
     use octoguns::lib::simulate::{simulate_bullets, compute_bullet_hits};
     use starknet::{ContractAddress, get_caller_address};
     use array::ArrayTrait;
@@ -72,9 +72,11 @@ mod move {
                         break;
                     }
                     let character_move = moves.pop_front().unwrap(); 
+                    
 
                     let mut character = *initial_positions.at(user_count);
-
+                    let is_owner = check_is_character_owner(world, character.id, player);
+                    assert!(is_owner, "Not piece owner");
                     // check character is out of moves
                     if character.current_step >= character.max_steps {
                         updated_positions.append(character);
