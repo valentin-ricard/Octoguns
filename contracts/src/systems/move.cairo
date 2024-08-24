@@ -45,17 +45,16 @@ mod actions {
         fn move(ref world: IWorldDispatcher, session_id: u32, mut moves: Array<CharacterMove>) {
             assert(moves.len() <= 3, 'Invalid number of moves');
             let player = get_caller_address();
-            // @TODO: Check if its the players turn
             let session = get!(world, session_id, (Session));
-            match session.status {
+            match session.state {
                 0 => {
-                    assert!(player == session.player_one. "not turn player");
+                    assert!(player == session.player1, "not turn player");
                 },
                 1 => {
-                    assert!(player == session.player_two, "not turn player");
+                    assert!(player == session.player2, "not turn player");
                 },
                 _ => {
-                    
+
                 }
             }
 
