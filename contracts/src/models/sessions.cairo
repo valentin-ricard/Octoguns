@@ -1,4 +1,4 @@
-use starknet::ContractAddress;
+use starknet::{ContractAddress, contract_address_const};
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model]
@@ -9,6 +9,24 @@ pub struct Session {
     pub player2: ContractAddress,
     pub map_id: u32,
     pub state: u8, // 0: waiting for seconde player. 1 waiting for spawn, 2 in game, 3 ended.
+}
+
+#[generate_trait]
+impl SessionImpl of SessionTrait {
+    fn new(session_id: u32, player1: ContractAddress, map_id: u32) -> Session {
+        Session {
+            session_id, 
+            player1, 
+            player2: contract_address_const::<0x0>(), 
+            map_id, 
+            state:0
+        }
+    }
+    fn join(ref self: Session, player2: ContractAddress) {
+        self.player2 = player2;
+        self.state = 1;
+    }
+    
 }
 
 #[derive(Drop, Serde)]

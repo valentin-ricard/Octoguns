@@ -10,6 +10,12 @@ pub struct Character {
     pub steps_amount: u32, // The amount of acion s this character can submit
 }
 
+#[generate_trait]
+impl CharacterImpl of CharacterTrait {
+    fn new(id: u32, session_id: u32, player_id: ContractAddress, steps_amount: u32) -> Character {
+        Character {entity_id: id, session_id, player_id, steps_amount}
+    }
+}
 
 // 10 000 x 10 000 x 10 000 map (high level position)
 #[derive(Copy, Drop, Serde)]
@@ -19,17 +25,13 @@ pub struct Position {
     pub entity_id: u32, 
     pub x: i64, 
     pub y: i64,
-    pub z: i64,
 }
 
-#[derive(Copy, Drop, Serde)]
-#[dojo::model]
-struct Camera {
-    #[key]
-    pub entity_id: u32,
-    pub pitch: u8,
-    pub yaw: u8,
-    pub roll: u8,
+#[generate_trait]
+impl PositionImpl of PositionTrait {
+    fn new(entity_id: u32, x: i64, y:i64) -> Position {
+        Position {entity_id, x, y}
+    }
 }
 
 #[derive(Copy, Drop, Serde)]
@@ -38,4 +40,11 @@ struct Health {
     #[key]
     pub entity_id: u32,
     pub health: u8,
+}
+
+#[generate_trait]
+impl HealthImpl of HealthTrait {
+    fn new(entity_id: u32, health: u8) -> Health {
+        Health {entity_id, health}
+    }
 }

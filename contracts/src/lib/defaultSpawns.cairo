@@ -1,13 +1,8 @@
 use array::ArrayTrait;
 use core::debug::PrintTrait;
+use octoguns::types::{Vec2, CharacterPosition};
 
-#[derive(Copy, Drop, Serde)]
-struct CharacterPosition {
-    x: i64,
-    y: i64,
-}
-
-fn generate_character_positions(player_id: u8) -> Array<CharacterPosition> {
+fn generate_character_positions(player_id: u8) -> Array<Vec2> {
     assert(player_id == 1 || player_id == 2, 'Invalid player ID');
 
     let mut positions = ArrayTrait::new();
@@ -27,7 +22,7 @@ fn generate_character_positions(player_id: u8) -> Array<CharacterPosition> {
         // Start at 1% and end at 99% of height to avoid placing characters exactly on the edges
         let y = 100_i64 + (count * 9800_i64 / (num_characters - 1));
         
-        positions.append(CharacterPosition { x, y });
+        positions.append(Vec2 { x, y });
         count += 1;
     };
 

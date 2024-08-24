@@ -1,26 +1,9 @@
 use array::ArrayTrait;
 use starknet::ContractAddress;
-use octoguns::lib::moveChecks::{CharacterPosition, does_collide};
-use octoguns::models::map::{Bullet};
+use octoguns::types::{CharacterPosition, CharacterMove};
+use octoguns::models::bullet::{Bullet};
 
-#[derive(Copy, Drop, Serde)]
-struct Vector2 {
-    x: i64,
-    y: i64,
-}
 
-#[derive(Copy, Drop, Serde)]
-struct Action {
-    action_type: u8,
-    step: u8,
-}
-
-#[derive(Clone, Drop, Serde)]
-struct CharacterMove {
-    character_ids: Array<u32>,
-    movement: Array<Vector2>,
-    actions: Array<Action>,
-}
 
 #[dojo::interface]
 trait IMove {
@@ -28,13 +11,12 @@ trait IMove {
 }
 
 #[dojo::contract]
-mod actions {
+mod move {
     use super::IMove;
-    use super::{Vector2, Action, CharacterMove};
-    use octoguns::models::sessions::{Session};
+    use octoguns::types::{Vec2, Action, CharacterMove, CharacterPosition};
+    use octoguns::models::sessions::{Session, SessionMeta};
     use octoguns::models::character::{Character, Position};
-    use octoguns::models::map::{Bullet};
-    use octoguns::lib::moveChecks::{CharacterPosition, does_collide, check_valid_movement};
+    use octoguns::models::bullet::{Bullet};
     use octoguns::lib::data_mover::data_mover::{get_character_ids, get_character_positions, get_all_bullets};
     use octoguns::lib::simulate::{simulate_bullets, compute_bullet_hits};
     use starknet::{ContractAddress, get_caller_address};
@@ -107,7 +89,7 @@ mod actions {
                     let movement_y = movement.y;
 
                     //Checks if the move is not to big
-                    let is_vaild = check_valid_movement(movement_x, movement_y);
+                    let is_vaild = false;
                     if !is_vaild {
                         updated_positions.append(character);
                         user_count += 1;
@@ -115,7 +97,7 @@ mod actions {
                     }
 
                     // TODO Check if the move collides
-                    let is_collision = does_collide(character);
+                    let is_collision = false;
                     if !is_collision {
                         //Move character
                         character.x = (character.x + movement_x);
@@ -132,7 +114,7 @@ mod actions {
                 let ( new_bullets, dead_characters ) = simulate_bullets(ref bullets, ref initial_positions);
                 // Update modesl in the world
                 step_count += 1;
-            }
+            };
             session_meta.turn_count += 1;
             set!(world, (session_meta));
         }

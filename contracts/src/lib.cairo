@@ -5,6 +5,7 @@ mod systems {
 }
 
 mod models {
+    mod bullet;
     mod sessions;
     mod map;
     mod character;
@@ -12,7 +13,8 @@ mod models {
 
 mod lib {
     mod defaultSpawns;
-    mod moveChecks;
     mod data_mover;
     mod simulate;
 }
+
+mod types;

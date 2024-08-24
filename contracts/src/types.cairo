@@ -1,6 +1,22 @@
-// In src/lib/moveChecks.cairo
 
-use array::ArrayTrait;
+#[derive(Copy, Drop, Serde, Introspect)]
+struct Vec2 {
+    x: i64,
+    y: i64,
+} 
+
+#[derive(Copy, Drop, Serde)]
+struct Action {
+    action_type: u8,
+    step: u8,
+}
+
+#[derive(Clone, Drop, Serde)]
+struct CharacterMove {
+    character_ids: Array<u32>,
+    movement: Array<Vec2>,
+    actions: Array<Action>,
+}
 
 #[derive(Drop, Copy)]
 pub struct CharacterPosition {
@@ -18,11 +34,3 @@ impl CharacterPositionImpl of CharacterPositionTrait {
     }
 }
 
-pub fn does_collide(character: CharacterPosition) -> bool {
-    // Implement your collision logic here
-    false
-}
-
-pub fn check_valid_movement(movement_x: i64, movement_y: i64) -> bool {
-    return true;
-}

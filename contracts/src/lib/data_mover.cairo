@@ -1,10 +1,9 @@
 #[dojo::contract]
 mod data_mover {
 
-    use octoguns::systems::move::{CharacterMove};
-    use octoguns::lib::moveChecks::{CharacterPosition, CharacterPositionTrait};
+    use octoguns::types::{CharacterPosition, CharacterPositionTrait, CharacterMove};
     use octoguns::models::character::{Position, Character};
-    use octoguns::models::map::{Bullet};
+    use octoguns::models::bullet::{Bullet};
     use octoguns::models::sessions::{SessionMeta};
     use starknet::{ContractAddress, get_caller_address};
 

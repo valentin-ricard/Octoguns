@@ -1,5 +1,5 @@
-use octoguns::models::map::{Bullet, Vec2};
-use octoguns::lib::moveChecks::{CharacterPosition};
+use octoguns::models::bullet::{Bullet};
+use octoguns::types::{Vec2, CharacterPosition};
 use alexandria_math::trigonometry::{fast_cos, fast_sin};
 
 // Tuple to hold both bullets and character positions
