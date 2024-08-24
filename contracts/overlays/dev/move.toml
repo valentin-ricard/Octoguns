@@ -1,4 +1,4 @@
-tag = "octoguns-spawn"
+tag = "octoguns-move"
 writes = [
     "octoguns-Position",
     "octoguns-Character",
