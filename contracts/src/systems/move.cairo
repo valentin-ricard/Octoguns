@@ -1,5 +1,7 @@
 use array::ArrayTrait;
 use starknet::ContractAddress;
+use octoguns::lib::moveChecks::{CharacterPosition, does_collide};
+use octoguns::models::map::{Bullet};
 
 #[derive(Copy, Drop, Serde)]
 struct Vector2 {
@@ -13,7 +15,7 @@ struct Action {
     step: u8,
 }
 
-#[derive(Drop, Serde)]
+#[derive(Clone, Drop, Serde)]
 struct CharacterMove {
     character_ids: Array<u32>,
     movement: Array<Vector2>,
@@ -22,7 +24,7 @@ struct CharacterMove {
 
 #[dojo::interface]
 trait IMove {
-    fn move(ref world: IWorldDispatcher, moves: Array<CharacterMove>);
+    fn move(ref world: IWorldDispatcher, session_id: u32, moves: Array<CharacterMove>);
 }
 
 #[dojo::contract]
@@ -31,69 +33,83 @@ mod actions {
     use super::{Vector2, Action, CharacterMove};
     use octoguns::models::sessions::{Session};
     use octoguns::models::character::{Character, Position};
+    use octoguns::models::map::{Bullet};
+    use octoguns::lib::moveChecks::{CharacterPosition, does_collide, check_valid_movement};
+    use octoguns::lib::data_mover::data_mover::{get_character_ids, store_character_positions, get_all_bullets};
     use starknet::{ContractAddress, get_caller_address};
     use array::ArrayTrait;
 
-    // Define a struct to hold character ID and position
-    #[derive(Drop, Copy)]
-    struct CharacterPosition {
-        id: u32,
-        x: u16,
-        y: u16,
-        max_steps: u32,
-        current_step: u32,
-    }
-
     #[abi(embed_v0)]
     impl MoveImpl of IMove<ContractState> {
-        fn move(ref world: IWorldDispatcher, moves: Array<CharacterMove>) {
+        fn move(ref world: IWorldDispatcher, session_id: u32, mut moves: Array<CharacterMove>) {
             assert(moves.len() <= 3, 'Invalid number of moves');
 
-            let caller = get_caller_address();
-
-            // Create an array to store initial positions
-            let mut initial_positions: Array<CharacterPosition> = ArrayTrait::new();
+            // @TODO: Check if its the players turn
 
             // Collect all unique character IDs from all moves
-            let mut all_character_ids: Array<u32> = ArrayTrait::new();
-            let mut move_index = 0;
+            let mut moves_clone = moves.clone();
+            let all_character_ids = get_character_ids(@moves);
+
+            // Create an array to store initial positions
+            // @Note initial_position struct: Array<CharacterPosition>
+            // pub struct CharacterPosition {
+            //     pub id: u32,
+            //     pub x: u16,
+            //     pub y: u16,
+            //     pub max_steps: u32,
+            //     pub current_step: u32,
+            // }
+            let initial_positions = store_character_positions(world, all_character_ids);
+
+            let bullets = get_all_bullets(world, session_id);
+
+            let mut step_count = 0;
             loop {
-                if move_index >= moves.len() {
+                if step_count >= 100_u32 {
                     break;
                 }
-                let character_move = moves.at(move_index);
-                let mut char_index = 0;
+                let mut user_count = 0;
+                moves = moves_clone.clone();
                 loop {
-                    if char_index >= character_move.character_ids.len() {
+                    let character_move = moves.pop_front().unwrap(); 
+
+                    if user_count == initial_positions.len() {
                         break;
                     }
-                    let character_id = *character_move.character_ids.at(char_index);
-                    all_character_ids.append(character_id);
-                    char_index += 1;
+                    let character = *initial_positions.at(user_count);
+
+                    // check character is out of moves
+                    if character.current_step >= character.max_steps {
+                        break;
+                    }
+
+                    // TODO Check if move is valid
+                    //Get movement vector
+                    let character_id = *character_move.character_ids.at(user_count); // Access the character ID
+                    let movement = *character_move.movement.at(user_count); 
+                    let movement_x = movement.x;
+                    let movement_y = movement.y;
+
+                    //Checks if the move is not to big
+                    let is_vaild = check_valid_movement(movement_x, movement_y);
+                    if !is_vaild {
+                        break;
+                    }
+
+                    // Check if the move collides
+                    let is_collision = does_collide(character);
+                    if !is_collision {
+                        //Move character
+                    }
+
+                    // TODO Check if shot
                 };
-                move_index += 1;
-            };
 
-            // Get initial positions for all characters
-            let mut char_index = 0;
-            loop {
-                if char_index >= all_character_ids.len() {
-                    break;
-                }
-                let character_id = *all_character_ids.at(char_index);
-                
-                // Retrieve the Character and Position structs from the world
-                let character = get!(world, character_id, (Character));
-                let position = get!(world, character_id, (Position));
+                // TODO Simulete Bullets
 
-                // Validate that the caller owns this character
-                assert(character.player_id == caller, 'Not character owner');
-
-                // Store the initial position in our array
-                initial_positions.append(CharacterPosition { id: character_id, x: position.x, y: position.y, max_steps: character.steps_amount, current_step: 0 });
-
-                char_index += 1;
-            };
+                step_count += 1;
+            }
         }
     }
 }
+
