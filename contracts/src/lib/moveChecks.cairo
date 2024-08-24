@@ -15,3 +15,7 @@ pub fn does_collide(character: CharacterPosition) -> bool {
     // Implement your collision logic here
     false
 }
+
+pub fn check_valid_movement(movement_x: i16, movement_y: i16) -> bool {
+    return true;
+}

@@ -7,7 +7,7 @@ mod data_mover {
     use octoguns::models::sessions::{SessionMeta};
     use starknet::{ContractAddress, get_caller_address};
 
-    fn get_character_ids(moves: Array<CharacterMove>) -> Array<u32> {
+    fn get_character_ids(moves: @Array<CharacterMove>) -> Array<u32> {
         let mut all_character_ids: Array<u32> = ArrayTrait::new();
         let mut move_index = 0;
         loop {
