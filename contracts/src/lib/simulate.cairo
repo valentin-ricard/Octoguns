@@ -92,14 +92,29 @@ pub fn compute_bullet_hits(bullet_position_x: i64, bullet_position_y: i64, chara
 #[cfg(test)]
 mod simulate_tests {
 
-    use octoguns::models::map::{Bullet, BulletTrait};
+    use octoguns::types::{CharacterPosition, CharacterPositionTrait};
+    use octoguns::models::bullet::{Bullet, BulletTrait};
     use octoguns::models::map::{Vec2};
+    use octoguns::lib::defaultSpawns::{generate_character_positions};
     use super::{simulate_bullet, simulate_bullets};
+
+    fn get_test_character_array() -> Array<CharacterPosition>{
+        let positions = generate_character_positions(1);
+        let mut index = 0;
+        let mut res = ArrayTrait::new();
+        while index < positions.len() {
+            let position = *positions.at(index);
+            res.append(CharacterPositionTrait::new(index, position.x, position.y, 100, 0));
+            index +=1;
+        };
+        res
+    }
 
     #[test]
    fn test_bullet_sim_y_only()  {
         let bullet = BulletTrait::new(1, Vec2 { x:3, y:0}, 1, 0);
-        let res = simulate_bullet(bullet);
+        let characters = get_test_character_array();
+        let (res, id) = simulate_bullet(bullet, @characters);
         match res {
             Option::None => {
                 panic!("Should not be none");
@@ -114,7 +129,8 @@ mod simulate_tests {
     #[test]
     fn test_bullet_sim_x_only()  {
          let bullet = BulletTrait::new(1, Vec2 { x:3, y:0}, 1, 90 * 100_000_000);
-         let res = simulate_bullet(bullet);
+         let characters = get_test_character_array();
+         let (res, id) = simulate_bullet(bullet, @characters);
          match res {
              Option::None => {
                  panic!("Should not be none");
@@ -133,9 +149,11 @@ mod simulate_tests {
         let bullet_2 = BulletTrait::new(1, Vec2 { x:3, y:5}, 3, 74);
         let bullet_3 = BulletTrait::new(1, Vec2 { x:6, y:1}, 4, 27);
         let bullet_4 = BulletTrait::new(1, Vec2 { x:3, y:0}, -1, -90);
+
+        let mut characters = get_test_character_array();
     
-        let bullets = array![bullet_1, bullet_2, bullet_3, bullet_4];
-        let res = simulate_bullets(bullets);
+        let mut bullets = array![bullet_1, bullet_2, bullet_3, bullet_4];
+        let res = simulate_bullets(ref bullets, ref characters);
          
      }
 }
