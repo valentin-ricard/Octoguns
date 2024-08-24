@@ -7,7 +7,7 @@ trait ISetup {
 #[dojo::contract]
 mod start {
     use super::ISetup;
-    use octoguns::models::sessions::{Session, SessionTrait};
+    use octoguns::models::sessions::{Session, SessionTrait, SessionMeta, SessionMetaTrait};
     use starknet::{ContractAddress, get_caller_address};
 
     #[abi(embed_v0)]
@@ -17,7 +17,7 @@ mod start {
             let player = get_caller_address();
             let id = world.uuid();
             let session = SessionTrait::new(id, player, 1);
-
+            let session_meta = SessionMetaTrait::new(id);
             set!(world, (session));
         }
 
