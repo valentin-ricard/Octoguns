@@ -2,8 +2,25 @@ use array::ArrayTrait;
 use starknet::ContractAddress;
 use octoguns::lib::moveChecks::{CharacterPosition, does_collide};
 use octoguns::models::map::{Bullet};
-use octoguns::lib::types::{CharacterMove, Vector2, Action};
 
+#[derive(Copy, Drop, Serde)]
+struct Vector2 {
+    x: i16,
+    y: i16,
+}
+
+#[derive(Copy, Drop, Serde)]
+struct Action {
+    action_type: u8,
+    step: u8,
+}
+
+#[derive(Clone, Drop, Serde)]
+struct CharacterMove {
+    character_ids: Array<u32>,
+    movement: Array<Vector2>,
+    actions: Array<Action>,
+}
 
 #[dojo::interface]
 trait IMove {
@@ -11,7 +28,7 @@ trait IMove {
 }
 
 #[dojo::contract]
-mod move {
+mod actions {
     use super::IMove;
     use super::{Vector2, Action, CharacterMove};
     use octoguns::models::sessions::{Session};
