@@ -1,6 +1,6 @@
 <script lang="ts">
     import { T } from "@threlte/core";
-    import { BoxGeometry, Mesh, MeshStandardMaterial, Vector3 } from "three";
+    import { BoxGeometry, Euler, Mesh, MeshStandardMaterial, Vector3 } from "three";
 
     export let position: [number, number, number] = [0,3,0];
     const [x,y,z] = position;
@@ -8,7 +8,7 @@
     let material = new MeshStandardMaterial({color: "blue"});
 </script>
 
-<T.Group position = {[x,y,z]}>
+<T.Group position = {[x,y,z]} rotation={[0, Math.PI, 0]}>
     <T.Mesh >
         <T.BoxGeometry args={[.1,.4,.1]}/>
         <T is={material} />

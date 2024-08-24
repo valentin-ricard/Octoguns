@@ -9,7 +9,6 @@
 <Canvas size={{height: 800, width: 800}}>
     <World>
         <Scene />
-        <Gun position = { [0,5,0] }/>
 
     </World>
 </Canvas>

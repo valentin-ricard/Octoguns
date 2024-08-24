@@ -121,5 +121,5 @@
         </T.Group>
       </CollisionGroups>
     </RigidBody>
-    <Gun position={[0,2,2]}/>
+    <Gun position={[.75,.5,-1]}/>
   </T.Group>
