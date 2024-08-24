@@ -46,12 +46,13 @@ mod actions {
             assert(moves.len() <= 3, 'Invalid number of moves');
             let player = get_caller_address();
             let session = get!(world, session_id, (Session));
-            match session.state {
+            let mut session_meta = get!(world, session_id, (SessionMeta));
+            match session_meta.turn_count % 2 {
                 0 => {
-                    assert!(player == session.player1, "not turn player");
+                    assert!(player == session.player2, "not turn player");
                 },
                 1 => {
-                    assert!(player == session.player2, "not turn player");
+                    assert!(player == session.player1, "not turn player");
                 },
                 _ => {
 
@@ -132,6 +133,8 @@ mod actions {
                 // Update modesl in the world
                 step_count += 1;
             }
+            session_meta.turn_count += 1;
+            set!(world, (session_meta));
         }
     }
 }
