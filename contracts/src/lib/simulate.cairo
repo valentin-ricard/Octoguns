@@ -1,47 +1,47 @@
 use octoguns::models::map::{Bullet, Vec2};
 use octoguns::lib::moveChecks::{CharacterPosition};
-
 use alexandria_math::trigonometry::{fast_cos, fast_sin};
 
-// #[derive(Copy, Drop, Serde)]
-// #[dojo::model]
-// pub struct Bullet {
-//     #[key]
-//     pub bullet_id: u32,
-//     pub coords: Vec2,
-//     pub speed: u32, // pixels per step
-//     pub direction: u32, // in degrees
-// }
+// Tuple to hold both bullets and character positions
+pub type SimulationResult = (Array<Bullet>, Array<u32>);
 
-
-// TO DO The bullet simpulation
-pub fn simulate_bullets(mut bullets: Array<Bullet>, ref character_positions: Array<CharacterPosition>) -> Array<Bullet> {
+pub fn simulate_bullets(ref bullets: Array<Bullet>, ref character_positions: Array<CharacterPosition>) -> SimulationResult {
     let mut updated_bullets = ArrayTrait::new();
+    let mut dead_characters_ids = ArrayTrait::new();
+    let mut character_index: u32 = 0;
+
     loop {
-        match bullets.pop_front() {
-            Option::Some(bullet) => {
-                match simulate_bullet(bullet, @character_positions) {
-                    Option::Some(updated_bullet) => updated_bullets.append(updated_bullet),
-                    Option::None => {},
-                }
-            },
-            Option::None => {
-                break;
-            },
+        if character_index >= bullets.len() {
+            break;
         }
+        let bullet = *bullets.at(character_index);
+        let (updated_bullet, character_id) = simulate_bullet(bullet, @character_positions);
+        match updated_bullet {
+            Option::Some(bullet) => updated_bullets.append(bullet),
+            Option::None => {},
+        }
+        if character_id != 0 {
+            // Only append character if not hit
+                dead_characters_ids.append(character_id);
+        }
+        character_index += 1;
     };
-    updated_bullets
+
+    (updated_bullets, dead_characters_ids)
 }
 
-pub fn simulate_bullet(mut bullet: Bullet, character_positions: @Array<CharacterPosition>) -> Option<Bullet> {
-
+pub fn simulate_bullet(mut bullet: Bullet, character_positions: @Array<CharacterPosition>) -> (Option<Bullet>, u32) {
     let position = bullet.coords;
-    let position_x = position.x; // i64
-    let position_y = position.y; // i64
-    let speed = bullet.speed; // in pixels per step
-    let direction = bullet.direction; // in degrees from 0 to 259
+    let position_x = position.x;
+    let position_y = position.y;
+    let speed = bullet.speed;
+    let direction = bullet.direction;
 
-    let is_charater_hit = compute_bullet_hits(position_x, position_y, character_positions);
+    let character_id = compute_bullet_hits(position_x, position_y, character_positions);
+
+    if character_id != 0 {
+        return (Option::None(()), character_id);
+    }
 
     let x_shift = fast_sin(direction) * speed / 100_000_000;
     let y_shift = fast_cos(direction) * speed / 100_000_000;
@@ -50,17 +50,17 @@ pub fn simulate_bullet(mut bullet: Bullet, character_positions: @Array<Character
     let new_position_y = position_y + y_shift;
 
     if new_position_x < 0 || new_position_x > 10_000 || new_position_y < 0 || new_position_y > 10_000 {
-        return Option::None(());
+        return (Option::None(()), character_id);
     }
 
     bullet.coords = Vec2 { x: new_position_x, y: new_position_y };
 
-    return Option::Some(bullet);
+    (Option::Some(bullet), character_id)
 }
 
-pub fn compute_bullet_hits(bullet_position_x: i64, bullet_position_y: i64, characters: @Array<CharacterPosition>) -> bool {
-    let mut character_index = 0;
-    let mut hit_detected = false;
+pub fn compute_bullet_hits(bullet_position_x: i64, bullet_position_y: i64, characters: @Array<CharacterPosition>) -> u32 {
+    let mut character_index: u32 = 0;
+    let mut character_id = 0;
 
     loop {
         if character_index >= characters.len() {
@@ -78,12 +78,12 @@ pub fn compute_bullet_hits(bullet_position_x: i64, bullet_position_y: i64, chara
 
         if bullet_position_x >= lower_bound_x && bullet_position_x <= upper_bound_x &&
            bullet_position_y >= lower_bound_y && bullet_position_y <= upper_bound_y {
-            hit_detected = true;
-            break; // Exit the loop if a hit is detected
+            character_id = *character.id;
+            break;        
         }
 
         character_index += 1;
     };
 
-    hit_detected // Return the result
+    character_id
 }

@@ -116,9 +116,9 @@ mod actions {
                 // Replace initial_positions with updated_positions
                 initial_positions = updated_positions;
 
-                // TODO Simulete Bullets
-                bullets = simulate_bullets(bullets, ref initial_positions);
-
+                // TODO test imulete Bullets
+                let ( new_bullets, dead_characters ) = simulate_bullets(ref bullets, ref initial_positions);
+                // Update modesl in the world
                 step_count += 1;
             }
         }
