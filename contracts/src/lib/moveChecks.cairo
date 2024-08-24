@@ -5,8 +5,8 @@ use array::ArrayTrait;
 #[derive(Drop, Copy)]
 pub struct CharacterPosition {
     pub id: u32,
-    pub x: u16,
-    pub y: u16,
+    pub x: i16,
+    pub y: i16,
     pub max_steps: u32,
     pub current_step: u32,
 }

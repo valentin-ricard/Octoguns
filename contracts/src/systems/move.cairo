@@ -59,7 +59,7 @@ mod actions {
             //     pub max_steps: u32,
             //     pub current_step: u32,
             // }
-            let initial_positions = store_character_positions(world, all_character_ids);
+            let mut initial_positions = store_character_positions(world, all_character_ids);
 
             let bullets = get_all_bullets(world, session_id);
 
@@ -70,16 +70,20 @@ mod actions {
                 }
                 let mut user_count = 0;
                 moves = moves_clone.clone();
+                let mut updated_positions = ArrayTrait::new();
                 loop {
-                    let character_move = moves.pop_front().unwrap(); 
 
                     if user_count == initial_positions.len() {
                         break;
                     }
-                    let character = *initial_positions.at(user_count);
+                    let character_move = moves.pop_front().unwrap(); 
+
+                    let mut character = *initial_positions.at(user_count);
 
                     // check character is out of moves
                     if character.current_step >= character.max_steps {
+                        updated_positions.append(character);
+                        user_count += 1;    
                         break;
                     }
 
@@ -93,6 +97,8 @@ mod actions {
                     //Checks if the move is not to big
                     let is_vaild = check_valid_movement(movement_x, movement_y);
                     if !is_vaild {
+                        updated_positions.append(character);
+                        user_count += 1;
                         break;
                     }
 
@@ -100,10 +106,17 @@ mod actions {
                     let is_collision = does_collide(character);
                     if !is_collision {
                         //Move character
+                        character.x = (character.x + movement_x);
+                        character.y = (character.y + movement_y);
+                        character.current_step += 1;
                     }
+                    updated_positions.append(character);
+                    user_count += 1;
 
                     // TODO Check if shot
                 };
+                // Replace initial_positions with updated_positions
+                initial_positions = updated_positions;
 
                 // TODO Simulete Bullets
 
