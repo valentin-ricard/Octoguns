@@ -1,7 +1,7 @@
 mod systems {
     mod start; 
     mod spawn;
-    mod move;
+    mod actions;
 }
 
 mod models {
@@ -17,5 +17,6 @@ mod lib {
     mod simulate;
 }
 
+mod tests;
 mod consts;
 mod types;
