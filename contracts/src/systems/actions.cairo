@@ -40,6 +40,9 @@ mod actions {
             let mut moves_clone = moves.clone();
             let all_character_ids = get_character_ids(@moves);
 
+            // TODO also get all the active character ids and iterate over them to remove the all_character_ids
+            // from the other team 
+
             // Create an array to store initial positions
             // @Note initial_position struct: Array<CharacterPosition>
             // pub struct CharacterPosition {
