@@ -1,3 +1,5 @@
+use octoguns::types::Vec2;
+
 #[derive(Clone, Drop, Serde)]
 #[dojo::model]
 pub struct Map {
@@ -17,19 +19,3 @@ pub struct MapObjects {
     pub coords: Vec2, 
 }
 
-
-#[derive(Drop, Serde, Introspect)]
-struct Vec2 {
-    x: u32,
-    y: u32,
-} 
-
-#[derive(Drop, Serde)]
-#[dojo::model]
-pub struct Bullet {
-    #[key]
-    pub bullet_id: u32,
-    pub coords: Vec2,
-    pub speed: u32, // pixels per step
-    pub direction: u32, // in degrees
-}

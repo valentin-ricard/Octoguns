@@ -1,10 +1,11 @@
 mod systems {
     mod start; 
     mod spawn;
-    mod move;
+    mod actions;
 }
 
 mod models {
+    mod bullet;
     mod sessions;
     mod map;
     mod character;
@@ -12,6 +13,9 @@ mod models {
 
 mod lib {
     mod defaultSpawns;
-    mod moveChecks;
-    mod data_mover;
+    mod helpers;
+    mod simulate;
 }
+
+mod consts;
+mod types;

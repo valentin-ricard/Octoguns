@@ -2,47 +2,23 @@
 
 	import { dojoStore, modelsStore } from "./stores";
 	import { get } from "svelte/store";
-	import { Direction } from "./dojo/utils";
+    import SceneCanvas from "./components/SceneCanvas.svelte";
 
-	let {
-        client,
-        clientModels,
-        contractComponents,
-        systemCalls,
-        config,
-        world,
-        burnerManager,
-        rpcProvider,
-        sync,
-        account,
-		toriiClient
-	} = get(dojoStore);
+	const dojo = get(dojoStore);
+	let {startCreate, startJoin, spawn} = dojo.systemCalls;
+	let account = dojo.burnerManager.account;
 
 	let {models} = get(modelsStore);
 
-	let address = burnerManager.account?.address;
+	let address = dojo.burnerManager.account?.address;
 	console.log(models);
-
-
 
 </script>
 
 <main>
-	<h1>Hello {address}!</h1>
-	<div> </div>
-	<button on:click={() => systemCalls.spawn(account)}> Spawn </button>
-	<div > 
-		<button on:click={() => systemCalls.move(account, Direction.Up)}> Up </button>
-	<div/>	
-	<div> 
-		<button on:click={() => systemCalls.move(account, Direction.Left)}> Left </button>
-		<button on:click={() => systemCalls.move(account, Direction.Right)}> Right </button>
-	<div/>	
-	<div > 
-		<button on:click={() => systemCalls.move(account, Direction.Down)}> Down </button>
-	<div/>	
-
-
+	<div class = "canvas" >
+		<SceneCanvas />
+	<div>
 </main>
 
 <style lang="scss">
@@ -61,6 +37,12 @@
 
 		@media (min-width: 640px) {
 			max-width: none;
+		}
+
+		.canvas {
+			justify-content: center;
+			align-content: center;
+			align-items: center;
 		}
 	}
 </style>
