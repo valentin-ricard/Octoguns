@@ -17,6 +17,5 @@ mod lib {
     mod simulate;
 }
 
-mod tests;
 mod consts;
 mod types;

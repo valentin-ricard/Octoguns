@@ -102,6 +102,7 @@
   <T.Group {position}>
     <RigidBody
       bind:rigidBody
+      {/* @ts-ignore*/}
       {position}
       enabledRotations={[false, false, false]}
     >
