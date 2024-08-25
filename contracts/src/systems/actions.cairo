@@ -1,7 +1,5 @@
-use array::ArrayTrait;
-use starknet::ContractAddress;
 use octoguns::types::{CharacterPosition, CharacterMove};
-use octoguns::models::bullet::{Bullet};
+use octoguns::models::bullet::{Bullet, BulletTrait};
 
 #[dojo::interface]
 trait IActions {
@@ -14,9 +12,9 @@ mod actions {
     use octoguns::types::{Vec2, Action, CharacterMove, CharacterPosition};
     use octoguns::models::sessions::{Session, SessionMeta};
     use octoguns::models::character::{Character, Position};
-    use octoguns::models::bullet::{Bullet};
+    use octoguns::models::bullet::{Bullet, BulletTrait};
     use octoguns::lib::helpers::{get_character_ids, get_character_positions, get_all_bullets, check_is_character_owner};
-    use octoguns::lib::simulate::{simulate_bullets, compute_bullet_hits};
+    use octoguns::lib::simulate::{simulate_bullets};
     use starknet::{ContractAddress, get_caller_address};
 
     #[abi(embed_v0)]
@@ -96,8 +94,8 @@ mod actions {
                     let is_collision = false;
                     if !is_collision {
                         //Move character
-                        character.x = (character.x + movement_x);
-                        character.y = (character.y + movement_y);
+                        character.coords.x = (character.coords.x + movement_x);
+                        character.coords.y = (character.coords.y + movement_y);
                         character.current_step += 1;
                     }
                     updated_positions.append(character);

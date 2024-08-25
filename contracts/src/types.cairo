@@ -21,8 +21,7 @@ struct CharacterMove {
 #[derive(Drop, Copy)]
 pub struct CharacterPosition {
     pub id: u32,
-    pub x: i64,
-    pub y: i64,
+    pub coords: Vec2,
     pub max_steps: u32,
     pub current_step: u32,
 }
@@ -30,7 +29,7 @@ pub struct CharacterPosition {
 #[generate_trait]
 impl CharacterPositionImpl of CharacterPositionTrait {
     fn new(id: u32, x: i64, y:i64, max_steps: u32, current_step: u32) -> CharacterPosition {
-        CharacterPosition {id, x, y, max_steps, current_step}
+        CharacterPosition {id, coords: Vec2 {x,y}, max_steps, current_step}
     }
 }
 
