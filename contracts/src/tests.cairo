@@ -7,21 +7,23 @@ mod tests {
     use starknet::testing::{set_caller_address};
     use starknet::ContractAddress;
     // import test utils
-    use octoguns::models::{character::{Character, Position, Camera, Health, character, position, camera, health},
-                            map::{Map, MapObjects, Bullet, map, map_objects, bullet},
-                            sessions::{Session, session, SessionMeta, session_meta}};
-    use octoguns::systems::{start::{start, IStartDispatcher, IStartDispatcherTrait}, 
-                            move::{move, IMoveDispatcher, IMoveDispatcherTrait}, 
-                            spawn::{spawn, ISpawnDispatcher, ISpawnDispatcherTrait}};
+    use octoguns::models::character::{Character, Position, Health, character, position, health};
+    use octoguns::models::map::{Map, MapObjects, map, map_objects};
+    use octoguns::models::sessions::{Session, session, SessionMeta, session_meta};
+    use octoguns::models::bullet::{Bullet, bullet, BulletTrait};
+    use octoguns::types::{CharacterMove, CharacterPosition, CharacterPositionTrait, Vec2, Action};
+
+    use octoguns::systems::start::{start, IStartDispatcher, IStartDispatcherTrait}; 
+    use octoguns::systems::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
+    use octoguns::systems::spawn::{spawn, ISpawnDispatcher, ISpawnDispatcherTrait};
 
     fn setup() -> ( IWorldDispatcher, 
                     IStartDispatcher, 
-                    IMoveDispatcher,
+                    IActionsDispatcher,
                     ISpawnDispatcher) {
 
         let models = array![ character::TEST_CLASS_HASH,
                             position::TEST_CLASS_HASH,
-                            camera::TEST_CLASS_HASH,
                             health::TEST_CLASS_HASH,
                             map::TEST_CLASS_HASH,
                             map_objects::TEST_CLASS_HASH,
@@ -34,22 +36,22 @@ mod tests {
         let mut world = spawn_test_world(["octoguns"].span(), models.span());
 
         // deploy systems contract
-        let move_address = world
-            .deploy_contract('salt', move::TEST_CLASS_HASH.try_into().unwrap());
+        let actions_address = world
+            .deploy_contract('salt', actions::TEST_CLASS_HASH.try_into().unwrap());
         let spawn_address = world
             .deploy_contract('m', spawn::TEST_CLASS_HASH.try_into().unwrap());
         let start_address = world
             .deploy_contract('b', start::TEST_CLASS_HASH.try_into().unwrap());
 
-        let move_system = IMoveDispatcher { contract_address: move_address };
+        let actions_system = IActionsDispatcher { contract_address: actions_address };
         let spawn_system = ISpawnDispatcher { contract_address: spawn_address };
         let start_system = IStartDispatcher { contract_address: start_address };
 
-        world.grant_writer(dojo::utils::bytearray_hash(@"octoguns"), move_address);
+        world.grant_writer(dojo::utils::bytearray_hash(@"octoguns"), actions_address);
         world.grant_writer(dojo::utils::bytearray_hash(@"octoguns"), spawn_address);
         world.grant_writer(dojo::utils::bytearray_hash(@"octoguns"), start_address);
 
-        (world, start_system, move_system, spawn_system)
+        (world, start_system, actions_system, spawn_system)
     }
 
     #[test]

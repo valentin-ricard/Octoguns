@@ -3,27 +3,24 @@ use starknet::ContractAddress;
 use octoguns::types::{CharacterPosition, CharacterMove};
 use octoguns::models::bullet::{Bullet};
 
-
-
 #[dojo::interface]
-trait IMove {
+trait IActions {
     fn move(ref world: IWorldDispatcher, session_id: u32, moves: Array<CharacterMove>);
 }
 
 #[dojo::contract]
-mod move {
-    use super::IMove;
+mod actions {
+    use super::IActions;
     use octoguns::types::{Vec2, Action, CharacterMove, CharacterPosition};
     use octoguns::models::sessions::{Session, SessionMeta};
     use octoguns::models::character::{Character, Position};
     use octoguns::models::bullet::{Bullet};
-    use octoguns::lib::data_mover::data_mover::{get_character_ids, get_character_positions, get_all_bullets};
+    use octoguns::lib::helpers::{get_character_ids, get_character_positions, get_all_bullets, check_is_character_owner};
     use octoguns::lib::simulate::{simulate_bullets, compute_bullet_hits};
     use starknet::{ContractAddress, get_caller_address};
-    use array::ArrayTrait;
 
     #[abi(embed_v0)]
-    impl MoveImpl of IMove<ContractState> {
+    impl ActionsImpl of IActions<ContractState> {
         fn move(ref world: IWorldDispatcher, session_id: u32, mut moves: Array<CharacterMove>) {
             assert(moves.len() <= 3, 'Invalid number of moves');
             let player = get_caller_address();
@@ -62,10 +59,7 @@ mod move {
             let mut bullets = get_all_bullets(world, session_id);
 
             let mut step_count = 0;
-            loop {
-                if step_count >= 100_u32 {
-                    break;
-                }
+            while step_count < 100_u32{
                 let mut user_count = 0;
                 moves = moves_clone.clone();
                 let mut updated_positions = ArrayTrait::new();
@@ -75,9 +69,11 @@ mod move {
                         break;
                     }
                     let character_move = moves.pop_front().unwrap(); 
+                    
 
                     let mut character = *initial_positions.at(user_count);
-
+                    let is_owner = check_is_character_owner(world, character.id, player);
+                    assert!(is_owner, "Not piece owner");
                     // check character is out of moves
                     if character.current_step >= character.max_steps {
                         updated_positions.append(character);

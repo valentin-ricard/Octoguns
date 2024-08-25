@@ -43,7 +43,7 @@ mod spawn {
 
                 let id2 = world.uuid();
                 let c2 = CharacterTrait::new(id2, session_id, caller, default_steps);
-                let p2 = PositionTrait::new(id2, position_1.x, position_1.y);
+                let p2 = PositionTrait::new(id2, position_2.x, position_2.y);
                 let h2 = HealthTrait::new(id2, 100);
                 session_meta.add_character(id2);
                 set!(world,(c2,p2,h2));

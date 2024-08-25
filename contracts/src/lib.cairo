@@ -1,7 +1,7 @@
 mod systems {
     mod start; 
     mod spawn;
-    mod move;
+    mod actions;
 }
 
 mod models {
@@ -13,7 +13,7 @@ mod models {
 
 mod lib {
     mod defaultSpawns;
-    mod data_mover;
+    mod helpers;
     mod simulate;
 }
 

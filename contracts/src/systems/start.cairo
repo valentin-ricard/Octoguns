@@ -1,17 +1,17 @@
 #[dojo::interface]
-trait ISetup {
+trait IStart {
     fn create(ref world: IWorldDispatcher);
     fn join(ref world: IWorldDispatcher, session_id: u32);
 }
 
 #[dojo::contract]
 mod start {
-    use super::ISetup;
+    use super::IStart;
     use octoguns::models::sessions::{Session, SessionTrait, SessionMeta, SessionMetaTrait};
     use starknet::{ContractAddress, get_caller_address};
 
     #[abi(embed_v0)]
-    impl SetupImpl of ISetup<ContractState> {
+    impl StartImpl of IStart<ContractState> {
         fn create(ref world: IWorldDispatcher) {
             // Do shit
             let player = get_caller_address();
