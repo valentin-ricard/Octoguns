@@ -28,7 +28,7 @@ fn get_character_ids(moves: @Array<CharacterMove>) -> Array<u32> {
     return all_character_ids;
 }
 
-fn get_character_positions(world: IWorldDispatcher, all_character_ids: Array<u32>) -> Array<CharacterPosition> {
+fn get_character_positions(world: IWorldDispatcher, ref all_character_ids: Array<u32>) -> Array<CharacterPosition> {
     let mut initial_positions: Array<CharacterPosition> = ArrayTrait::new();
     let caller = get_caller_address();
 
@@ -78,8 +78,9 @@ fn check_is_character_owner(world: IWorldDispatcher, id: u32, player: ContractAd
     character.player_id == player
 }
 
-fn filter_out_dead_characters(world: IWorldDispatcher, all_character_positions: Array<CharacterPosition>, dead_characters: Array<u32>) -> Array<CharacterPosition> {
+fn filter_out_dead_characters(world: IWorldDispatcher, all_character_positions: Array<CharacterPosition>, dead_characters: Array<u32>) -> (Array<CharacterPosition>, Array<u32>) {
     let mut filtered_positions: Array<CharacterPosition> = ArrayTrait::new();
+    let mut filtered_ids: Array<u32> = ArrayTrait::new();
     let mut i = 0;
     loop {
         if i >= all_character_positions.len() {
@@ -100,9 +101,10 @@ fn filter_out_dead_characters(world: IWorldDispatcher, all_character_positions: 
         };
         if !is_dead {
             filtered_positions.append(character);
+            filtered_ids.append(character.id);
         }
         i += 1;
     };
-    return filtered_positions;
+    return (filtered_positions, filtered_ids);
 }
 

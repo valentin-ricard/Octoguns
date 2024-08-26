@@ -38,8 +38,8 @@ mod actions {
 
             // Collect all unique character IDs from all moves
             let mut moves_clone = moves.clone();
-            let user_character_ids = get_character_ids(@moves);
-            let all_character_ids = session_meta.characters.clone();
+            let mut user_character_ids = get_character_ids(@moves);
+            let mut all_character_ids = session_meta.characters.clone();
 
             // TODO also get all the active character ids and iterate over them to remove the all_character_ids
             // from the other team 
@@ -53,8 +53,8 @@ mod actions {
             //     pub max_steps: u32,
             //     pub current_step: u32,
             // }
-            let mut initial_positions = get_character_positions(world, user_character_ids);
-            let mut all_character_positions = get_character_positions(world, all_character_ids);
+            let mut initial_positions = get_character_positions(world, ref user_character_ids);
+            let mut all_character_positions = get_character_positions(world, ref all_character_ids);
 
             let mut bullets = get_all_bullets(world, session_id);
 
@@ -111,16 +111,21 @@ mod actions {
 
                 // TODO test imulete Bullets
                 let ( new_bullets, dead_characters ) = simulate_bullets(ref bullets, ref initial_positions);
+                
                 // Update modesl in the world
-                let new_user_character = filter_out_dead_characters(world, initial_positions, dead_characters.clone());
+                let (new_user_character, new_user_character_ids) = filter_out_dead_characters(world, initial_positions, dead_characters.clone());
                 initial_positions = new_user_character;
+                user_character_ids = new_user_character_ids;
 
                 // Remove dead characters from all_character_ids
-                let new_all_character = filter_out_dead_characters(world, all_character_positions, dead_characters.clone());
+                let (new_all_character, new_all_character_ids) = filter_out_dead_characters(world, all_character_positions, dead_characters.clone());
                 all_character_positions = new_all_character;
-                step_count += 1;
+                all_character_ids = new_all_character_ids;
+                
 
                 bullets = new_bullets;
+
+                step_count += 1;
             };
             session_meta.next_turn();
 
