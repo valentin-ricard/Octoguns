@@ -6,7 +6,7 @@
     import { Vector3 } from "three";
 </script>
 
-<Canvas size={{height: 800, width: 800}}>
+<Canvas>
     <World>
         <Scene />
 
