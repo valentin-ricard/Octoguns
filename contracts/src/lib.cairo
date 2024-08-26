@@ -15,6 +15,7 @@ mod lib {
     mod defaultSpawns;
     mod helpers;
     mod simulate;
+    mod shoot;
 }
 
 mod tests {

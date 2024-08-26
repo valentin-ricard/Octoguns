@@ -15,6 +15,7 @@ mod actions {
     use octoguns::models::bullet::{Bullet, BulletTrait};
     use octoguns::lib::helpers::{get_character_ids, get_character_positions, get_all_bullets, check_is_character_owner, filter_out_dead_characters, extract_bullet_ids, check_win};
     use octoguns::lib::simulate::{simulate_bullets};
+    use octoguns::lib::shoot::{shoot};
     use starknet::{ContractAddress, get_caller_address};
 
     #[abi(embed_v0)]
@@ -60,7 +61,7 @@ mod actions {
             let mut bullets = get_all_bullets(world, session_id);
 
             let mut step_count = 0;
-            while step_count < 100_u32{
+            while step_count < 100_u8{
                 let mut user_count = 0;
                 moves = moves_clone.clone();
                 let mut updated_positions = ArrayTrait::new();
@@ -105,6 +106,14 @@ mod actions {
                         character.current_step += 1;
                     }
                     updated_positions.append(character);
+
+                    // Compute shot bullets
+                    let mut next_bullet_shot = *character_move.actions.at(0);
+                    if next_bullet_shot.step == step_count {
+                        //Shoot
+                        let bullet = shoot(world, next_bullet_shot, character);
+                        bullets.append(bullet);
+                    }
                     user_count += 1;
                 };
                 // Replace initial_positions with updated_positions
