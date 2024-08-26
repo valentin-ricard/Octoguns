@@ -23,6 +23,7 @@ mod actions {
             assert(moves.len() <= 3, 'Invalid number of moves');
             let player = get_caller_address();
             let mut session = get!(world, session_id, (Session));
+            assert!(session.state == 2, "Game not started");
             let mut session_meta = get!(world, session_id, (SessionMeta));
             match session_meta.turn_count % 2 {
                 0 => {
