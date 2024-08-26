@@ -1,19 +1,20 @@
 <script lang="ts">
-
 	import { createComponentValueStore } from "./dojo/componentValueStore";
 	import { setupStore } from "./main";
     import { derived, writable } from "svelte/store";
 	import SceneCanvas from "./components/SceneCanvas.svelte";
 
-	$: ({ clientComponents, torii, burnerManager, client } = $setupStore);
+	interface Torii {
+		poseidonHash: (inputs: any[]) => any; // Adjust types as needed
+	}
+
+	$: ({ clientComponents = {}, torii = {} as Torii, burnerManager = {}, client = {} } = $setupStore);
 
 	$: entity = derived(setupStore, ($store) =>
-		$store
-		? torii.poseidonHash([BigInt(0).toString()])
-		: undefined
+		$store ? torii.poseidonHash([BigInt(0).toString()]) : undefined
 	);
 
-	$: global = createComponentValueStore(clientComponents.Global, entity);
+	$: global = clientComponents && entity ? createComponentValueStore(clientComponents.Global, entity) : null;
 
 	$: console.log("Global Updated:", $global);
 
@@ -29,30 +30,30 @@
 			} else {
 			  console.error("No active account found");
 			}
-		  }}> Create Game </button>
+		}}> Create Game </button>
+
 		<div>
-			{#if global}
+			{#if $global}
             <select on:change={(e) => pending_id.set(e.target.value)}>
-				{#each $global.pending_sessions as pending, index} 
-					{console.log(pending)}
-					<option value={pending.value}s key={index}> {pending.value} </option>
+				{#each $global.pending_sessions as pending (pending.value)} 
+					<option value={pending.value} key={pending.value}> {pending.value} </option>
 				{/each}
 			</select>
 			<button on:click={async () => {
 				const account = burnerManager.getActiveAccount();
 				if (account) {
-				await client.start.join({ account: account, session_id: $pending_id.value });
+				await client.start.join({ account: account, session_id: $pending_id });
 				} else {
 				console.error("No active account found");
 				}
             }}> Join game {$pending_id}</button>
 			{/if}
 		</div>
-	<div>
-	<div class = "canvas" >
-		<SceneCanvas />
-	<div>
-	
+
+		<div class="canvas">
+			<SceneCanvas />
+		</div>
+	</div>
 </main>
 
 <style lang="scss">
