@@ -78,4 +78,31 @@ fn check_is_character_owner(world: IWorldDispatcher, id: u32, player: ContractAd
     character.player_id == player
 }
 
+fn filter_out_dead_characters(world: IWorldDispatcher, all_character_positions: Array<CharacterPosition>, dead_characters: Array<u32>) -> Array<CharacterPosition> {
+    let mut filtered_positions: Array<CharacterPosition> = ArrayTrait::new();
+    let mut i = 0;
+    loop {
+        if i >= all_character_positions.len() {
+            break;
+        }
+        let character = *all_character_positions.at(i);
+        let mut is_dead = false;
+        let mut j = 0;
+        loop {
+            if j >= dead_characters.len() {
+                break;
+            }
+            if character.id == *dead_characters.at(j) {
+                is_dead = true;
+                break;
+            }
+            j += 1;
+        };
+        if !is_dead {
+            filtered_positions.append(character);
+        }
+        i += 1;
+    };
+    return filtered_positions;
+}
 
