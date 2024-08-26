@@ -13,7 +13,7 @@ mod actions {
     use octoguns::models::sessions::{Session, SessionMeta, SessionMetaTrait};
     use octoguns::models::character::{Character, Position};
     use octoguns::models::bullet::{Bullet, BulletTrait};
-    use octoguns::lib::helpers::{get_character_ids, get_character_positions, get_all_bullets, check_is_character_owner, filter_out_dead_characters, extract_bullet_ids};
+    use octoguns::lib::helpers::{get_character_ids, get_character_positions, get_all_bullets, check_is_character_owner, filter_out_dead_characters, extract_bullet_ids, check_win};
     use octoguns::lib::simulate::{simulate_bullets};
     use starknet::{ContractAddress, get_caller_address};
 
@@ -22,7 +22,7 @@ mod actions {
         fn move(ref world: IWorldDispatcher, session_id: u32, mut moves: Array<CharacterMove>) {
             assert(moves.len() <= 3, 'Invalid number of moves');
             let player = get_caller_address();
-            let session = get!(world, session_id, (Session));
+            let mut session = get!(world, session_id, (Session));
             let mut session_meta = get!(world, session_id, (SessionMeta));
             match session_meta.turn_count % 2 {
                 0 => {
@@ -121,9 +121,21 @@ mod actions {
                 let (new_all_character, new_all_character_ids) = filter_out_dead_characters(world, all_character_positions, dead_characters.clone());
                 all_character_positions = new_all_character;
                 all_character_ids = new_all_character_ids;
-                
 
                 bullets = new_bullets;
+
+                let is_win = check_win( ref user_character_ids, ref all_character_ids);
+                if is_win == 1 {
+                    // Player 1 wins
+                    session.state = 3;
+                    break;
+                } else if is_win == 2 {
+                    // Player 2 wins
+                    session.state = 4;
+                    break;
+                }
+                
+
 
                 step_count += 1;
             };
@@ -133,7 +145,7 @@ mod actions {
             session_meta.set_new_characters(all_character_ids);
             session_meta.set_new_bullets(bullet_ids);
             
-            set!(world, (session_meta));
+            set!(world, (session_meta, session));
         }
     }
 }

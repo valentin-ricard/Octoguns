@@ -121,3 +121,42 @@ fn extract_bullet_ids(bullets: Array<Bullet>) -> Array<u32> {
     };
     return bullet_ids;
 }
+
+fn check_win(ref user_character_ids: Array<u32>, ref all_character_ids: Array<u32>) -> u32 {
+    // Check if user_character_ids is empty
+    if user_character_ids.len() == 0 {
+        return 1; // User has lost (no characters left)
+    }
+
+    let mut remaining_all_characters = all_character_ids.len();
+
+    // Iterate through all_character_ids
+    let mut i = 0;
+    loop {
+        if i >= all_character_ids.len() {
+            break;
+        }
+        let all_id = *all_character_ids.at(i);
+        
+        // Check if this ID is in user_character_ids
+        let mut j = 0;
+        loop {
+            if j >= user_character_ids.len() {
+                break;
+            }
+            if all_id == *user_character_ids.at(j) {
+                remaining_all_characters -= 1; // Reduce count for matching ID
+                break;
+            }
+            j += 1;
+        };
+        i += 1;
+    };
+
+    // Check if all non-user characters are eliminated
+    if remaining_all_characters == 0 {
+        return 2; // User has won (all other characters eliminated)
+    };
+
+    return 0; // No win condition met
+}
