@@ -9,26 +9,24 @@
 	import { derived } from 'svelte/store'
 	import { setupStore } from 'src/main'
 	import { createComponentValueStore } from 'src/dojo/componentValueStore'
-	import { current_session } from 'src/stores'
+	import { current_session_id } from 'src/stores'
 	import CharacterModel from './CharacterModel.svelte'
 
 	let entity: any;
 	let session: any;
 	let session_meta: any;
-	let session_id = $current_session;
 
-	$: console.log($current_session);
 
 	$: ({ clientComponents, torii, burnerManager, client } = $setupStore);
 
-	$: if (session_id) entity = derived(setupStore, ($store) =>
+	$: entity = derived(setupStore, ($store) =>
 		$store
-		? torii.poseidonHash([BigInt(session_id).toString()])
+		? torii.poseidonHash([BigInt($current_session_id ? $current_session_id: 0).toString()])
 		: undefined
 	);
 
-	$: if (session_id) session = createComponentValueStore(clientComponents.Session, entity);
-	$: if (session_id) session_meta = createComponentValueStore(clientComponents.SessionMeta, entity);
+	$: if (current_session_id) session = createComponentValueStore(clientComponents.Session, entity);
+	$: if (current_session_id) session_meta = createComponentValueStore(clientComponents.SessionMeta, entity);
 
 	console.log(session)
 	$: console.log($session);

@@ -4,18 +4,21 @@
     import { createComponentValueStore } from "src/dojo/componentValueStore";
     import { derived } from "svelte/store";
     import { CylinderGeometry, MeshStandardMaterial } from "three";
+    
     export let id = 0;
     let entity: any;
     let character
+    console.log(id)
 
 	$: ({ clientComponents, torii, burnerManager, client } = $setupStore);
 
-    $: if (id) entity = derived(setupStore, ($store) =>
+    $: entity = derived(setupStore, ($store) =>
         $store
         ? torii.poseidonHash([BigInt(id).toString()])
         : undefined
     );
 
+    console.log(entity)
     $: if (id) character = createComponentValueStore(clientComponents.Character, entity);
     console.log(character)
 </script>
