@@ -1,8 +1,3 @@
-<script lang="ts">
-
-
-</script>
-
 
 
 
