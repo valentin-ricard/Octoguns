@@ -13,7 +13,7 @@ mod actions {
     use octoguns::models::sessions::{Session, SessionMeta, SessionMetaTrait};
     use octoguns::models::character::{Character, Position};
     use octoguns::models::bullet::{Bullet, BulletTrait};
-    use octoguns::lib::helpers::{get_character_ids, get_character_positions, get_all_bullets, check_is_character_owner, filter_out_dead_characters};
+    use octoguns::lib::helpers::{get_character_ids, get_character_positions, get_all_bullets, check_is_character_owner, filter_out_dead_characters, extract_bullet_ids};
     use octoguns::lib::simulate::{simulate_bullets};
     use starknet::{ContractAddress, get_caller_address};
 
@@ -110,7 +110,7 @@ mod actions {
                 initial_positions = updated_positions;
 
                 // TODO test imulete Bullets
-                let ( new_bullets, dead_characters ) = simulate_bullets(ref bullets, ref initial_positions);
+                let ( new_bullets, dead_characters ) = simulate_bullets(ref bullets, ref all_character_positions);
                 
                 // Update modesl in the world
                 let (new_user_character, new_user_character_ids) = filter_out_dead_characters(world, initial_positions, dead_characters.clone());
@@ -127,8 +127,11 @@ mod actions {
 
                 step_count += 1;
             };
-            session_meta.next_turn();
 
+            let bullet_ids = extract_bullet_ids(bullets);
+            session_meta.next_turn();
+            session_meta.set_new_characters(all_character_ids);
+            session_meta.set_new_bullets(bullet_ids);
             
             set!(world, (session_meta));
         }

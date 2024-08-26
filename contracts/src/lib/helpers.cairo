@@ -108,3 +108,16 @@ fn filter_out_dead_characters(world: IWorldDispatcher, all_character_positions: 
     return (filtered_positions, filtered_ids);
 }
 
+fn extract_bullet_ids(bullets: Array<Bullet>) -> Array<u32> {
+    let mut bullet_ids: Array<u32> = ArrayTrait::new();
+    let mut i = 0;
+    loop {
+        if i >= bullets.len() {
+            break;
+        }
+        let bullet = *bullets.at(i);
+        bullet_ids.append(bullet.bullet_id);
+        i += 1;
+    };
+    return bullet_ids;
+}
