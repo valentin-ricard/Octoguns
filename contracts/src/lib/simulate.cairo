@@ -1,4 +1,4 @@
-use octoguns::models::bullet::{Bullet};
+use octoguns::models::bullet::{Bullet, BulletTrait};
 use octoguns::types::{Vec2, CharacterPosition};
 use alexandria_math::trigonometry::{fast_cos, fast_sin};
 use octoguns::consts::TEN_E_8;
@@ -15,8 +15,8 @@ pub fn simulate_bullets(ref bullets: Array<Bullet>, ref character_positions: Arr
         if character_index >= bullets.len() {
             break;
         }
-        let bullet = *bullets.at(character_index);
-        let (updated_bullet, character_id) = simulate_bullet(bullet, @character_positions);
+        let mut bullet = *bullets.at(character_index);
+        let (updated_bullet, character_id) = bullet.simulate(@character_positions);
         match updated_bullet {
             Option::Some(bullet) => updated_bullets.append(bullet),
             Option::None => {},
@@ -31,64 +31,6 @@ pub fn simulate_bullets(ref bullets: Array<Bullet>, ref character_positions: Arr
     (updated_bullets, dead_characters_ids)
 }
 
-pub fn simulate_bullet(mut bullet: Bullet, character_positions: @Array<CharacterPosition>) -> (Option<Bullet>, u32) {
-    let position = bullet.coords;
-    let position_x = position.x;
-    let position_y = position.y;
-    let speed = bullet.speed;
-    let direction = bullet.direction;
-
-    let character_id = compute_bullet_hits(position_x, position_y, character_positions);
-
-    if character_id != 0 {
-        return (Option::None(()), character_id);
-    }
-
-    let x_shift = (fast_sin(direction) * speed) / TEN_E_8;
-    let y_shift = (fast_cos(direction) * speed) / TEN_E_8;
-
-    let new_position_x = position_x + x_shift;
-    let new_position_y = position_y + y_shift;
-
-    if new_position_x < 0 || new_position_x > 10_000 || new_position_y < 0 || new_position_y > 10_000 {
-        return (Option::None(()), character_id);
-    }
-
-    bullet.coords = Vec2 { x: new_position_x, y: new_position_y };
-
-    (Option::Some(bullet), character_id)
-}
-
-pub fn compute_bullet_hits(bullet_position_x: i64, bullet_position_y: i64, characters: @Array<CharacterPosition>) -> u32 {
-    let mut character_index: u32 = 0;
-    let mut character_id = 0;
-
-    loop {
-        if character_index >= characters.len() {
-            break;
-        }
-
-        let character = characters.at(character_index);
-        let character_position_x = *character.x;
-        let character_position_y = *character.y;
-
-        let lower_bound_x = character_position_x - 5;
-        let upper_bound_x = character_position_x + 5;
-        let lower_bound_y = character_position_y - 5;
-        let upper_bound_y = character_position_y + 5;
-
-        if bullet_position_x >= lower_bound_x && bullet_position_x <= upper_bound_x &&
-           bullet_position_y >= lower_bound_y && bullet_position_y <= upper_bound_y {
-            character_id = *character.id;
-            break;        
-        }
-
-        character_index += 1;
-    };
-
-    character_id
-}
-
 #[cfg(test)]
 mod simulate_tests {
 
@@ -96,52 +38,9 @@ mod simulate_tests {
     use octoguns::models::bullet::{Bullet, BulletTrait};
     use octoguns::models::map::{Vec2};
     use octoguns::lib::defaultSpawns::{generate_character_positions};
-    use super::{simulate_bullet, simulate_bullets};
+    use super::{simulate_bullets, SimulationResult};
 
-    fn get_test_character_array() -> Array<CharacterPosition>{
-        let positions = generate_character_positions(1);
-        let mut index = 0;
-        let mut res = ArrayTrait::new();
-        while index < positions.len() {
-            let position = *positions.at(index);
-            res.append(CharacterPositionTrait::new(index, position.x, position.y, 100, 0));
-            index +=1;
-        };
-        res
-    }
-
-    #[test]
-   fn test_bullet_sim_y_only()  {
-        let bullet = BulletTrait::new(1, Vec2 { x:3, y:0}, 1, 0);
-        let characters = get_test_character_array();
-        let (res, id) = simulate_bullet(bullet, @characters);
-        match res {
-            Option::None => {
-                panic!("Should not be none");
-            },
-            Option::Some(bullet) => {
-                assert!(bullet.coords.y == 1, "y should have changed");
-                assert!(bullet.coords.x == 3, "x should not have changed")
-            }
-        }
-    }
-
-    #[test]
-    fn test_bullet_sim_x_only()  {
-         let bullet = BulletTrait::new(1, Vec2 { x:3, y:0}, 1, 90 * 100_000_000);
-         let characters = get_test_character_array();
-         let (res, id) = simulate_bullet(bullet, @characters);
-         match res {
-             Option::None => {
-                 panic!("Should not be none");
-             },
-             Option::Some(bullet) => {
-                println!("x: {}, y: {}", bullet.coords.x, bullet.coords.y);
-                 assert!(bullet.coords.x == 4, "x should have changed");
-                 assert!(bullet.coords.y == 0, "y should not have changed");
-             }
-         }
-     }
+    use octoguns::tests::helpers::{get_test_character_array};
 
      #[test]
     fn test_4_bullets_sim()  {
@@ -158,12 +57,15 @@ mod simulate_tests {
      }
 
      #[test]
-     fn test_collision() {
+     fn test_collisions() {
         let bullet = BulletTrait::new(1, Vec2 { x:3, y:0}, 1, 0);
-        let characters = array![CharacterPositionTrait::new(69,4,0,100,0)];
-        let (res, id) = simulate_bullet(bullet, @characters);
-        match res {
+        let mut bullets = array![bullet];
+        //todo add more collisions
+        let mut characters = array![CharacterPositionTrait::new(69,4,0,100,0)];
+        let (mut bullets, mut ids) = simulate_bullets(ref bullets, ref characters);
+        match bullets.pop_front() {
             Option::None => {
+                let id = ids.pop_front().unwrap();
                 assert!(id == 69, "not returning id of hit piece");
             },
             Option::Some(bullet) => {

@@ -9,12 +9,19 @@ mod models {
     mod sessions;
     mod map;
     mod character;
+    mod global;
 }
 
 mod lib {
     mod defaultSpawns;
     mod helpers;
     mod simulate;
+    mod shoot;
+}
+
+mod tests {
+    mod helpers;
+   // mod test_world;
 }
 
 mod consts;

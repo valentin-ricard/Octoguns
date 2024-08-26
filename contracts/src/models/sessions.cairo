@@ -29,7 +29,7 @@ impl SessionImpl of SessionTrait {
     
 }
 
-#[derive(Drop, Serde)]
+#[derive(Clone, Drop, Serde)]
 #[dojo::model]
 pub struct SessionMeta {
     #[key]
@@ -57,5 +57,11 @@ impl SessionMetaImpl of SessionMetaTrait {
     }
     fn add_character(ref self: SessionMeta, character_id: u32) {
         self.characters.append(character_id);
+    }
+    fn set_new_characters(ref self: SessionMeta, characters: Array<u32>) {
+        self.characters = characters;
+    }
+    fn set_new_bullets(ref self: SessionMeta, bullets: Array<u32>) {
+        self.bullets = bullets;
     }
 }

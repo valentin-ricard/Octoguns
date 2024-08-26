@@ -1,13 +1,13 @@
 
 #[derive(Copy, Drop, Serde, Introspect)]
 struct Vec2 {
-    x: i64,
-    y: i64,
+    x: u32,
+    y: u32,
 } 
 
 #[derive(Copy, Drop, Serde)]
 struct Action {
-    action_type: u8,
+    action_type: u32, // actually an angle DO NOT CHANGE
     step: u8,
 }
 
@@ -21,16 +21,15 @@ struct CharacterMove {
 #[derive(Drop, Copy)]
 pub struct CharacterPosition {
     pub id: u32,
-    pub x: i64,
-    pub y: i64,
+    pub coords: Vec2,
     pub max_steps: u32,
     pub current_step: u32,
 }
 
 #[generate_trait]
 impl CharacterPositionImpl of CharacterPositionTrait {
-    fn new(id: u32, x: i64, y:i64, max_steps: u32, current_step: u32) -> CharacterPosition {
-        CharacterPosition {id, x, y, max_steps, current_step}
+    fn new(id: u32, x: u32, y:u32, max_steps: u32, current_step: u32) -> CharacterPosition {
+        CharacterPosition {id, coords: Vec2 {x,y}, max_steps, current_step}
     }
 }
 

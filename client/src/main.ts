@@ -1,18 +1,25 @@
 import App from './App.svelte';
 import { dojoConfig } from "../dojoConfig.ts";
-import { setup } from "./dojo/setup.ts";
-import { dojoStore, modelsStore } from './stores.ts';
+import { setup, SetupResult } from "./dojo/setup.ts";
+import { writable } from 'svelte/store';
 
-let result= await setup(dojoConfig);
+export const setupStore = writable<SetupResult>();
 
-let models = await result.toriiClient.getAllEntities(1000, 0);
-
-modelsStore.set(models);
-dojoStore.set(result);
-
-
-const app = new App({
-	target: document.body
-});
-
-export default app;
+async function initApp() {
+	// Update the store with the setup result
+	setupStore.set(await setup(dojoConfig));
+  
+	setupStore.subscribe((value) => {
+	  console.log(value);
+	});
+  
+	console.log("App initialized");
+  
+	const app = new App({
+	  target: document.body,
+	});
+  
+	return app;
+  }
+  
+  export default initApp();
