@@ -18,7 +18,7 @@ export async function setup({ ...config }: DojoConfig) {
     rpcUrl: config.rpcUrl,
     toriiUrl: config.toriiUrl,
     relayUrl: "",
-    worldAddress: config.manifest.world.address || "",
+    worldAddress: '0x77ad0d39b9fc234686eb338d6dfafdaecf5a54fe03f6995b23d59a0f5d49417' || "",
   });
 
   // create contract components
@@ -29,6 +29,8 @@ export async function setup({ ...config }: DojoConfig) {
 
   // create dojo provider
   const dojoProvider = new DojoProvider(config.manifest, config.rpcUrl);
+  let entities = await toriiClient.getAllEntities(100,0);
+  console.log(entities)
 
   const sync = await getSyncEntities(
     toriiClient,
@@ -36,12 +38,6 @@ export async function setup({ ...config }: DojoConfig) {
     []
   );
 
-  const eventSync = getSyncEvents(
-    toriiClient,
-    contractComponents as any,
-    undefined,
-    []
-  );
 
   // setup world
   const client = await setupWorld(dojoProvider);
@@ -80,7 +76,7 @@ export async function setup({ ...config }: DojoConfig) {
     dojoProvider,
     burnerManager,
     toriiClient,
-    eventSync,
+  
     torii,
     sync,
   };
