@@ -19,6 +19,7 @@ mod spawn {
             let positions_1 = generate_character_positions(1);
             let positions_2 = generate_character_positions(2);
             let mut session = get!(world, session_id, (Session));
+            assert!(session.status == 1, "Not spawnable");
             let caller = get_caller_address();
             let mut session_meta = get!(world, session_id, (SessionMeta));
 
