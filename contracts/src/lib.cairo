@@ -9,6 +9,7 @@ mod models {
     mod sessions;
     mod map;
     mod character;
+    mod global;
 }
 
 mod lib {

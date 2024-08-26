@@ -1,23 +1,37 @@
 <script lang="ts">
 
-	import { dojoStore, modelsStore } from "./stores";
-	import { get } from "svelte/store";
-    import SceneCanvas from "./components/SceneCanvas.svelte";
+	import { createComponentValueStore } from "./dojo/componentValueStore";
+	import { setupStore } from "./main";
+	import { derived } from "svelte/store";
+	import SceneCanvas from "./components/SceneCanvas.svelte";
 
-	const dojo = get(dojoStore);
-	let {startCreate, startJoin, spawn} = dojo.systemCalls;
-	let account = dojo.burnerManager.account;
+	$: ({ clientComponents, torii, burnerManager, client } = $setupStore);
 
-	let {models} = get(modelsStore);
+	$: entity = derived(setupStore, ($store) =>
+		$store
+		? torii.poseidonHash([BigInt(0).toString()])
+		: undefined
+	);
 
-	let address = dojo.burnerManager.account?.address;
-	console.log(models);
+	$: global = createComponentValueStore(clientComponents.Global, entity);
+
+	$: console.log("Global Updated:", $global);
 
 </script>
 
 <main>
 	<div class = "canvas" >
 		<SceneCanvas />
+	<div>
+	<div  >
+		<button on:click={async () => {
+			const account = burnerManager.getActiveAccount();
+			if (account) {
+			  await client.start.create({ account });
+			} else {
+			  console.error("No active account found");
+			}
+		  }}/> Create Game <button>
 	<div>
 </main>
 

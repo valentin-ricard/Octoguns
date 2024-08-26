@@ -1,5 +1,5 @@
 import { overridableComponent } from "@dojoengine/recs";
-import { defineContractComponents } from "./bindings/typescript/models.gen";
+import { defineContractComponents } from "./typescript/models.gen";
 
 export type ClientComponents = ReturnType<typeof createClientComponents>;
 
@@ -16,6 +16,7 @@ export function createClientComponents({
         MapObjects: overridableComponent(contractComponents.MapObjects),
         Session: overridableComponent(contractComponents.Session),
         Position: overridableComponent(contractComponents.Position),
-        Bullet: overridableComponent(contractComponents.Bullet)
+        Bullet: overridableComponent(contractComponents.Bullet),
+        Global: overridableComponent(contractComponents.Global)
     };
 }
