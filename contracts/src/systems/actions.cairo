@@ -13,7 +13,7 @@ mod actions {
     use octoguns::models::sessions::{Session, SessionMeta, SessionMetaTrait};
     use octoguns::models::character::{Character, Position};
     use octoguns::models::bullet::{Bullet, BulletTrait};
-    use octoguns::lib::helpers::{get_character_ids, get_character_positions, get_all_bullets, check_is_character_owner, filter_out_dead_characters, extract_bullet_ids, check_win};
+    use octoguns::lib::helpers::{get_character_ids, get_character_positions, get_all_bullets, check_is_character_owner, filter_out_dead_characters, extract_bullet_ids, check_win, check_is_valid_move};
     use octoguns::lib::simulate::{simulate_bullets};
     use octoguns::lib::shoot::{shoot};
     use starknet::{ContractAddress, get_caller_address};
@@ -90,8 +90,8 @@ mod actions {
                     let movement_y = movement.y;
 
                     //Checks if the move is not to big
-                    let is_vaild = false;
-                    if !is_vaild {
+                    let is_valid = check_is_valid_move(movement_x, movement_y);
+                    if !is_valid {
                         updated_positions.append(character);
                         user_count += 1;
                         break;
@@ -119,10 +119,10 @@ mod actions {
                 // Replace initial_positions with updated_positions
                 initial_positions = updated_positions;
 
-                // TODO test imulete Bullets
+                // simulate Bullets
                 let ( new_bullets, dead_characters ) = simulate_bullets(ref bullets, ref all_character_positions);
                 
-                // Update modesl in the world
+                // Update models in the world
                 let (new_user_character, new_user_character_ids) = filter_out_dead_characters(world, initial_positions, dead_characters.clone());
                 initial_positions = new_user_character;
                 user_character_ids = new_user_character_ids;
