@@ -119,6 +119,8 @@ mod actions {
                 let new_all_character = filter_out_dead_characters(world, all_character_positions, dead_characters.clone());
                 all_character_positions = new_all_character;
                 step_count += 1;
+
+                bullets = new_bullets;
             };
             session_meta.next_turn();
 
