@@ -4,6 +4,7 @@
     import { derived, writable } from "svelte/store";
 	import SceneCanvas from "./components/SceneCanvas.svelte";
 
+	let inGame = false;
 	interface Torii {
 		poseidonHash: (inputs: any[]) => any; // Adjust types as needed
 	}
@@ -22,11 +23,17 @@
 </script>
 
 <main>
-	<div style="justify-content: space-evenly" >
+	<div style="justify-content: space-evenly" class="start" >
+		{#if !inGame}
+		<div class="title-card">
+			<div>OCTO</div>
+			<div>GUNS</div>
+		</div>
 		<button on:click={async () => {
 			const account = burnerManager.getActiveAccount();
 			if (account) {
 			  await client.start.create({ account });
+			  inGame = true;
 			} else {
 			  console.error("No active account found");
 			}
@@ -43,6 +50,7 @@
 				const account = burnerManager.getActiveAccount();
 				if (account) {
 				await client.start.join({ account: account, session_id: $pending_id });
+				inGame = true;
 				} else {
 				console.error("No active account found");
 				}
@@ -50,9 +58,12 @@
 			{/if}
 		</div>
 
-		<div class="canvas">
-			<SceneCanvas />
-		</div>
+		{/if}	
+		{#if inGame}
+			<div class="canvas">
+				<SceneCanvas />
+			</div>
+		{/if}
 	</div>
 </main>
 
@@ -79,5 +90,20 @@
 			align-content: center;
 			align-items: center;
 		}
+    .start {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      gap: 0; // Remove gap between elements
+    }
+
+    .title-card {
+      font-family: 'Block';
+      font-size: 15em;
+      line-height: 0.8;
+      margin-bottom: -0.1em; // Add negative margin to pull content up
+    }
 	}
 </style>
