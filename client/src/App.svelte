@@ -4,20 +4,31 @@
 	import { setupStore } from "./main";
     import { derived, writable } from "svelte/store";
 	import SceneCanvas from "./components/SceneCanvas.svelte";
+    import { BurnerManager } from "@dojoengine/create-burner";
+	import { current_session } from "./stores";
 
 	$: ({ clientComponents, torii, burnerManager, client } = $setupStore);
 
-	$: entity = derived(setupStore, ($store) =>
+	$: global_entity = derived(setupStore, ($store) =>
 		$store
 		? torii.poseidonHash([BigInt(0).toString()])
 		: undefined
 	);
 
-	$: global = createComponentValueStore(clientComponents.Global, entity);
+	$: player_entity = derived(setupStore, ($store) =>
+		$store
+		? torii.poseidonHash([BigInt(burnerManager.getActiveAccount().address).toString()])
+		: undefined
+	);
+
+	$: global = createComponentValueStore(clientComponents.Global, global_entity);
+	$: player = createComponentValueStore(clientComponents.Player, player_entity);
+
 
 	$: console.log("Global Updated:", $global);
 
     let pending_id = writable(null);
+
 </script>
 
 <main>
@@ -31,11 +42,11 @@
 			}
 		  }}> Create Game </button>
 		<div>
-			{#if global}
+			{#if $global}
             <select on:change={(e) => pending_id.set(e.target.value)}>
 				{#each $global.pending_sessions as pending, index} 
 					{console.log(pending)}
-					<option value={pending.value}s key={index}> {pending.value} </option>
+					<option value={pending.value} key={index}> {pending.value} </option>
 				{/each}
 			</select>
 			<button on:click={async () => {
@@ -46,6 +57,24 @@
 				console.error("No active account found");
 				}
             }}> Join game {$pending_id}</button>
+			{/if}
+		</div>
+		<div>
+			{#if $player}
+			<span> Render Game: </span>
+            <select on:change={(e) => current_session.set(e.target.value)}>
+				{#each $player.games as game, index} 
+					<option value={game.value} key={index}> {game.value} </option>
+				{/each}
+			</select>
+			<button on:click={async () => {
+				const account = burnerManager.getActiveAccount();
+				if (account) {
+				await client.spawn.spawn({ account: account, session_id: $current_session });
+				} else {
+				console.error("No active account found");
+				}
+            }}> Spawn game {$current_session}</button>
 			{/if}
 		</div>
 	<div>

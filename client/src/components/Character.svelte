@@ -6,11 +6,12 @@
     import { PerspectiveCamera, Vector3 } from 'three'
     import PointerLockControls from './PointerLockControls.svelte'
     import Gun from './Gun.svelte'
+  
 
     export let position: [x: number, y: number, z: number] = [0, 0, 0]
     let radius = 0.3
     let height = 1.7
-    export let speed = 6
+    export let speed = 10
     let rigidBody: RapierRigidBody
     let lock: () => void
     let cam: PerspectiveCamera
@@ -84,7 +85,7 @@
     on:keydown|preventDefault={onKeyDown}
     on:keyup={onKeyUp}
   />
-  <T.Group position.y={0.9}>
+  <T.Group position.x={position[0]/100} position.y={0.9} position.z={position[2]/100}>
     <T.PerspectiveCamera
       makeDefault
       fov={90}

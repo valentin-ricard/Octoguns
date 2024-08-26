@@ -6,6 +6,34 @@
 	import { BoxGeometry, Mesh, MeshStandardMaterial, Vector3 } from 'three'
 	import Character from './Character.svelte'
 	import Ground from './Ground.svelte'
+	import { derived } from 'svelte/store'
+	import { setupStore } from 'src/main'
+	import { createComponentValueStore } from 'src/dojo/componentValueStore'
+	import { current_session } from 'src/stores'
+	import CharacterModel from './CharacterModel.svelte'
+
+	let entity: any;
+	let session: any;
+	let session_meta: any;
+	let session_id = $current_session;
+
+	$: console.log($current_session);
+
+	$: ({ clientComponents, torii, burnerManager, client } = $setupStore);
+
+	$: if (session_id) entity = derived(setupStore, ($store) =>
+		$store
+		? torii.poseidonHash([BigInt(session_id).toString()])
+		: undefined
+	);
+
+	$: if (session_id) session = createComponentValueStore(clientComponents.Session, entity);
+	$: if (session_id) session_meta = createComponentValueStore(clientComponents.SessionMeta, entity);
+
+	console.log(session)
+	$: console.log($session);
+	$: console.log($session_meta)
+
 
 
 	let playerMesh: Mesh
@@ -24,6 +52,8 @@
 	  })
 	  if (!positionHasBeenSet) positionHasBeenSet = true
 	})
+
+
   </script>
   <T.DirectionalLight
 	castShadow
@@ -68,4 +98,10 @@
 	  />
 	</AutoColliders>
   </CollisionGroups>
+
+  {#if $session_meta}
+	{#each $session_meta.characters as character}
+		<CharacterModel id={character.value} /> 
+	{/each}
+  {/if}
   
