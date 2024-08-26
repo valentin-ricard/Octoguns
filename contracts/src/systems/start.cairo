@@ -31,6 +31,7 @@ mod start {
             let mut session = get!(world, session_id, (Session));
 
             let player = get_caller_address();
+            assert!(session.player1 != player, "can't join own session");
             //TODO global.remove_session(session_id);
             session.join(player);
 

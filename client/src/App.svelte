@@ -2,7 +2,7 @@
 
 	import { createComponentValueStore } from "./dojo/componentValueStore";
 	import { setupStore } from "./main";
-	import { derived } from "svelte/store";
+    import { derived, writable } from "svelte/store";
 	import SceneCanvas from "./components/SceneCanvas.svelte";
 
 	$: ({ clientComponents, torii, burnerManager, client } = $setupStore);
@@ -17,13 +17,11 @@
 
 	$: console.log("Global Updated:", $global);
 
+    let pending_id = writable(null);
 </script>
 
 <main>
-	<div class = "canvas" >
-		<SceneCanvas />
-	<div>
-	<div  >
+	<div style="justify-content: space-evenly" >
 		<button on:click={async () => {
 			const account = burnerManager.getActiveAccount();
 			if (account) {
@@ -31,8 +29,30 @@
 			} else {
 			  console.error("No active account found");
 			}
-		  }}/> Create Game <button>
+		  }}> Create Game </button>
+		<div>
+			{#if global}
+            <select on:change={(e) => pending_id.set(e.target.value)}>
+				{#each $global.pending_sessions as pending, index} 
+					{console.log(pending)}
+					<option value={pending.value}s key={index}> {pending.value} </option>
+				{/each}
+			</select>
+			<button on:click={async () => {
+				const account = burnerManager.getActiveAccount();
+				if (account) {
+				await client.start.join({ account: account, session_id: $pending_id.value });
+				} else {
+				console.error("No active account found");
+				}
+            }}> Join game {$pending_id}</button>
+			{/if}
+		</div>
 	<div>
+	<div class = "canvas" >
+		<SceneCanvas />
+	<div>
+	
 </main>
 
 <style lang="scss">
