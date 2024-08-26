@@ -23,13 +23,13 @@ impl CharacterImpl of CharacterTrait {
 pub struct Position {
     #[key]
     pub entity_id: u32, 
-    pub x: i64, 
-    pub y: i64,
+    pub x: u32, 
+    pub y: u32,
 }
 
 #[generate_trait]
 impl PositionImpl of PositionTrait {
-    fn new(entity_id: u32, x: i64, y:i64) -> Position {
+    fn new(entity_id: u32, x:  u32, y:u32) -> Position {
         Position {entity_id, x, y}
     }
 }

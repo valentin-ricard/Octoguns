@@ -3,7 +3,7 @@ use octoguns::models::bullet::{Bullet, BulletTrait};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 fn shoot(world: IWorldDispatcher, bullet: Action, character: CharacterPosition) -> Bullet {
-    let angle = bullet.action_type; //i64
+    let angle = bullet.action_type; //u32
     let coords = character.coords; //Vec2
     let speed = 25;
     let id = world.uuid();
