@@ -10,7 +10,7 @@ trait IActions {
 mod actions {
     use super::IActions;
     use octoguns::types::{Vec2, Action, CharacterMove, CharacterPosition};
-    use octoguns::models::sessions::{Session, SessionMeta};
+    use octoguns::models::sessions::{Session, SessionMeta, SessionMetaTrait};
     use octoguns::models::character::{Character, Position};
     use octoguns::models::bullet::{Bullet, BulletTrait};
     use octoguns::lib::helpers::{get_character_ids, get_character_positions, get_all_bullets, check_is_character_owner};
@@ -38,7 +38,8 @@ mod actions {
 
             // Collect all unique character IDs from all moves
             let mut moves_clone = moves.clone();
-            let all_character_ids = get_character_ids(@moves);
+            let user_character_ids = get_character_ids(@moves);
+            let all_character_ids = session_meta.characters.clone();
 
             // TODO also get all the active character ids and iterate over them to remove the all_character_ids
             // from the other team 
@@ -52,7 +53,8 @@ mod actions {
             //     pub max_steps: u32,
             //     pub current_step: u32,
             // }
-            let mut initial_positions = get_character_positions(world, all_character_ids);
+            let mut initial_positions = get_character_positions(world, user_character_ids);
+            let mut all_character_positions = get_character_positions(world, all_character_ids);
 
             let mut bullets = get_all_bullets(world, session_id);
 
@@ -112,7 +114,7 @@ mod actions {
                 // Update modesl in the world
                 step_count += 1;
             };
-            session_meta.turn_count += 1;
+            session_meta.next_turn();
             set!(world, (session_meta));
         }
     }
