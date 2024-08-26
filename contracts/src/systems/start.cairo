@@ -18,7 +18,7 @@ mod start {
             let id = world.uuid();
             let session = SessionTrait::new(id, player, 1);
             let session_meta = SessionMetaTrait::new(id);
-            set!(world, (session));
+            set!(world, (session, session_meta));
         }
 
         fn join(ref world: IWorldDispatcher, session_id: u32) {
