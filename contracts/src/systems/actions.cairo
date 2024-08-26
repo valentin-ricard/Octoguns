@@ -111,7 +111,7 @@ mod actions {
                     let mut next_bullet_shot = *character_move.actions.at(0);
                     if next_bullet_shot.step == step_count {
                         //Shoot
-                        let bullet = shoot(world, next_bullet_shot, character);
+                        let bullet = shoot(world, next_bullet_shot, character, player);
                         bullets.append(bullet);
                     }
                     user_count += 1;
