@@ -2,9 +2,7 @@
 	import { createComponentValueStore } from "../../dojo/componentValueStore";
 	import { setupStore } from "../../main";
     import { derived, writable } from "svelte/store";
-	import SceneCanvas from "../../components/SceneCanvas.svelte";
 
-	let inGame = false;
 	interface Torii {
 		poseidonHash: (inputs: any[]) => any; // Adjust types as needed
 	}
@@ -24,12 +22,11 @@
 
 
 	<div style="justify-content: space-evenly" class="start" >
-		{#if !inGame}
 		<button on:click={async () => {
 			const account = burnerManager.getActiveAccount();
 			if (account) {
 			  await client.start.create({ account });
-			  inGame = true;
+			  window.location.href = '/game';
 			} else {
 			  console.error("No active account found");
 			}
@@ -46,20 +43,13 @@
 				const account = burnerManager.getActiveAccount();
 				if (account) {
 				await client.start.join({ account: account, session_id: $pending_id });
-				inGame = true;
+				window.location.href = '/game';
 				} else {
 				console.error("No active account found");
 				}
             }}> Join game {$pending_id}</button>
 			{/if}
 		</div>
-
-		{/if}	
-		{#if inGame}
-			<div class="canvas">
-				<SceneCanvas />
-			</div>
-		{/if}
 	</div>
 
 
