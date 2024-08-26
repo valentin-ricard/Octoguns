@@ -161,7 +161,7 @@ fn check_win(ref user_character_ids: Array<u32>, ref all_character_ids: Array<u3
     return 0; // No win condition met
 }
 
-fn check_is_valid_move(x: i64, y: i64) -> bool {
+fn check_is_valid_move(x: u32, y: u32) -> bool {
     let max_user_speed = 10;
     if (x*x) + (y*y) <= max_user_speed* max_user_speed {
         return true;

@@ -8,15 +8,21 @@ pub struct Bullet {
     #[key]
     pub bullet_id: u32,
     pub coords: Vec2,
-    pub speed: i64, // pixels per step
-    pub direction: i64, // in degrees
+    pub speed: u32, // pixels per step
+    pub direction: u32, // in degrees
+}
+
+#[derive(Copy, Drop, Serde)]
+pub struct Vec2_i64 {
+    x: i64,
+    y: i64,
 }
 
 
 #[generate_trait]
 impl BulletImpl of BulletTrait {
 
-    fn new(id: u32, coords: Vec2, speed: i64, direction: i64) -> Bullet {
+    fn new(id: u32, coords: Vec2, speed: u32, direction: u32) -> Bullet {
         Bullet { bullet_id: id, coords, speed, direction}
     }
 
@@ -34,16 +40,16 @@ impl BulletImpl of BulletTrait {
             return (Option::None(()), character_id);
         }
 
-        let x_shift = (fast_sin(direction) * speed) / TEN_E_8;
-        let y_shift = (fast_cos(direction) * speed) / TEN_E_8;
+        let x_shift = (fast_sin(direction.into()) * speed.into()) / TEN_E_8;
+        let y_shift = (fast_cos(direction.into()) * speed.into()) / TEN_E_8;
 
-        let new = Vec2 { x: position_x + x_shift, y: position_y + y_shift};
+        let new = Vec2_i64 { x: position_x.into() + x_shift, y: position_y.into() + y_shift};
 
-        if new.x < 0 || new.x > 10_000 || new.y < 0 || new.y > 10_000 {
+        if new.x < 100 || new.x > 10_100 || new.y < 100 || new.y > 10_100 {
             return (Option::None(()), character_id);
         }
-
-        self.coords = new;
+        let new_vec2 = Vec2 { x: new.x.try_into().unwrap(), y: new.y.try_into().unwrap() };
+        self.coords = new_vec2;
 
         (Option::Some(self), character_id)
     }
