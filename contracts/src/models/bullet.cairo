@@ -139,7 +139,7 @@ mod simulate_tests {
      #[test]
      #[should_panic]
      fn test_collision_fail() {
-        let mut bullet = BulletTrait::new(1, Vec2 { x:7, y:1}, 1, 0);
+        let mut bullet = BulletTrait::new(1, Vec2 { x:700, y:1}, 1, 0);
         let characters = array![CharacterPositionTrait::new(69,4,0,100,0)];
         let (res, id) = bullet.simulate( @characters);
         match res {
