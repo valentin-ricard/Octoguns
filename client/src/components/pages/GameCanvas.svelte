@@ -1,6 +1,6 @@
 <script lang="ts">
 	import SceneCanvas from "../../components/SceneCanvas.svelte";
-
+    import { character_counter } from "src/stores";
 </script>
 
 <div class="container">
