@@ -2,6 +2,12 @@
 	import { createComponentValueStore } from "../../dojo/componentValueStore";
 	import { setupStore } from "../../main";
     import { derived, writable } from "svelte/store";
+	interface GameSession {
+		userAddress: string;
+		sessionId: bigint;
+	}
+
+	let gameSessions: GameSession[] = [];
 
 	$: ({ clientComponents, torii, burnerManager, client } = $setupStore);
 
@@ -11,31 +17,85 @@
 		: undefined
 	);
 
-	$: global = createComponentValueStore(clientComponents.Session, entity);
-
-	$: console.log("Global Updated:", $global);
-
+	$: global = createComponentValueStore(clientComponents.Global, entity);
 </script>
 
-<main>
-  {#if $setupStore}
-    <p>Setup completed</p>
-  {:else}
-    <p>Setting up...</p>
-  {/if}
+<style>
+	main {
+	  display: flex;
+	  flex-direction: column;
+	  justify-content: center;
+	  align-items: center;
+	  height: 100vh;
+	  text-align: center;
+	}
 
-  <button
-    on:click={async () => {
-      const account = burnerManager.getActiveAccount();
-      if (account) {
-        await client.start.create({ account });
-      } else {
-        console.error("No active account found");
-      }
-    }}>spawn</button
-  >
+	h1 {
+		font-family: 'Block';
+        font-size: 5em;
+		padding: 60px;
+        line-height: 0.8;
+        margin-bottom: -0.1em;
+    }
 
-  <div>
-    {$global}		
-  </div>
-</main>
+
+	.session-list {
+	  flex: 1;
+	  display: flex;
+	  flex-direction: column;
+	  justify-content: center;
+	  align-items: center;
+	  border: 2px solid #000;
+	  padding: 1rem;
+	  margin-bottom: 1rem;
+	  width: 50%;
+	  max-height: 60%;
+	  overflow-y: auto;
+	}
+  
+	.session-item {
+	  margin: 0.5rem 0;
+	}
+  
+	.buttons {
+	  display: flex;
+	  justify-content: space-between;
+	  width: 80%;
+	}
+  
+	button {
+	  padding: 0.5rem 1rem;
+	  font-size: 1rem;
+	}
+  </style>
+  
+  <main>
+	<h1>Octo Guns</h1>
+  
+	{#if !$setupStore}
+	  <p>Setting up...</p>
+	{/if}
+  
+	<div class="session-list">
+	  {#each $global.pending_sessions as session}
+		  <div class="session-item">
+			  <p>{session.value}</p>
+		  </div>
+	  {/each}
+	</div>
+  
+	<div class="buttons">
+	  <button
+ 		on:click={() => {window.location.href = '/';}}>Back</button>
+ 
+	  <button
+		on:click={async () => {
+		  const account = burnerManager.getActiveAccount();
+		  if (account) {
+			await client.start.create({ account });
+		  } else {
+			console.error("No active account found");
+		  }
+		}}>Create Game</button>
+	</div>
+  </main>
