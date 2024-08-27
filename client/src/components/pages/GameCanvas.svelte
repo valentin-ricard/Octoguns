@@ -1,10 +1,46 @@
 <script lang="ts">
 	import SceneCanvas from "../../components/SceneCanvas.svelte";
+    import { createComponentValueStore } from "src/dojo/componentValueStore";
+    import { getEntityIdFromKeys } from "@dojoengine/utils";
+    import { setupStore } from "src/main";
+    import { derived, writable } from "svelte/store";
+    import { current_session_id } from "src/stores";
 
+    $: ({ clientComponents, torii, burnerManager, client } = $setupStore);
+
+    $: account = burnerManager.getActiveAccount();
+    $: entity = derived(setupStore, ($store) =>
+        $store
+        ? torii.poseidonHash([account?.address])
+        : undefined
+    );
+
+    $: player = createComponentValueStore(clientComponents.Player, entity);
+
+    $: highestIndexedGameValue = $player.games.length > 0 
+        ? $player.games[$player.games.length - 1].value 
+        : undefined;
+       
+    $: current_session_id.set(highestIndexedGameValue);
+
+    const gameStarted = writable(false);
+
+    function startGame() {
+        const account = burnerManager.getActiveAccount();
+        if (account) {
+            client.spawn.spawn({ account: account, session_id: $current_session_id });
+            gameStarted.set(true);
+        } else {
+            console.error("No active account found");
+        }
+    }
 </script>
 
 <div class="container">
     <SceneCanvas />
+    {#if !$gameStarted}
+        <button class="start-button" on:click={startGame}>Start Game</button>
+    {/if}
 </div>
 
 <style>
@@ -19,5 +55,20 @@
         width: 100%;
         height: 100%;
         display: block;
+    }
+
+    .start-button {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 10px 20px;
+        font-size: 18px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        z-index: 10;
     }
 </style>
