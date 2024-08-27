@@ -3,7 +3,6 @@
     import { setupStore } from "src/main";
     import { createComponentValueStore } from "src/dojo/componentValueStore";
     import { derived } from "svelte/store";
-    import { CylinderGeometry, MeshStandardMaterial } from "three";
     
     export let id = 0;
     let entity: any;
@@ -19,11 +18,11 @@
     );
 
     $: character = createComponentValueStore(clientComponents.Character, entity);
-    $: console.log("character:", $character)
+    $: position = createComponentValueStore(clientComponents.Position, entity);
 </script>
 
-{#if $character}
-<T.Mesh position = {[0,0,0]}>
+{#if $character && $position}
+<T.Mesh position={[$position.x/ 100, 0, $position.y / 100 - 50]}>
     <T.BoxGeometry/>
     <T.MeshStandardMaterial color="red"/>
 </T.Mesh>

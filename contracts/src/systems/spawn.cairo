@@ -37,7 +37,6 @@ mod spawn {
                 let p1 = PositionTrait::new(id1, position_1.x, position_1.y);
                 let h1 = HealthTrait::new(id1, 100);
                 session_meta.add_character(id1);
-                set!(world,(c1,p1,h1));
                         
        
 
@@ -46,7 +45,8 @@ mod spawn {
                 let p2 = PositionTrait::new(id2, position_2.x, position_2.y);
                 let h2 = HealthTrait::new(id2, 100);
                 session_meta.add_character(id2);
-                set!(world,(c2,p2,h2));
+                set!(world,(c1,p1,h1,c2,p2,h2));
+                
 
                 i += 1;
             } ;
