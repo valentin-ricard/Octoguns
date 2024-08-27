@@ -18,9 +18,8 @@
         : undefined
     );
 
-    console.log(entity)
-    $: if (id) character = createComponentValueStore(clientComponents.Character, entity);
-    console.log(character)
+    $: character = createComponentValueStore(clientComponents.Character, entity);
+    $: console.log("character:", $character)
 </script>
 
 {#if $character}
