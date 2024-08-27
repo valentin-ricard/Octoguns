@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { createComponentValueStore } from "../../dojo/componentValueStore";
 	import { setupStore } from "../../main";
+	import { current_session_id } from "src/stores";
     import { derived, writable } from "svelte/store";
 
 	//TODO: Check if games are created by the current user
-	//TODO: route if the user creates or joins a game
-	
+	//TODO: route if the user creates or
 
 	$: ({ clientComponents, torii, burnerManager, client } = $setupStore);
 
@@ -23,6 +23,8 @@
 		if (account) {
 			console.log("Joining session", session.value);
 			await client.start.join({ account: account, session_id: session.value });
+			current_session_id.set(session.value);
+			window.location.href = "/game";
 		} else {
 			console.error("No active account found");
 		}
@@ -37,12 +39,14 @@
 	{/if}
   
 	<div class="session-list">
+		{#if $global}
 	  {#each $global.pending_sessions.slice().reverse() as session}
 		  <div class="session-item">
 			  <p>{session.value}</p>
 			  <button on:click={() => joinSession(session)}>Join</button>
 		  </div>
 	  {/each}
+	  {/if}
 	</div>
   
 	<div class="buttons">
@@ -54,6 +58,7 @@
 		  const account = burnerManager.getActiveAccount();
 		  if (account) {
 			await client.start.create({ account });
+			window.location.href = "/game";
 		  } else {
 			console.error("No active account found");
 		  }
