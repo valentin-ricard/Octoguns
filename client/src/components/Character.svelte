@@ -7,9 +7,18 @@
     import type { RigidBody as RapierRigidBody } from '@dimforge/rapier3d-compat'
     import { writable } from 'svelte/store'
     import { Bullet } from 'src/dojo/typescript/models.gen'
+    import * as THREE from 'three'
   //  import { bullets, characters } from 'src/stores'
 
   export let position: [number, number, number] = [0, 0, 0]
+
+    interface Bullet {
+      x: number;
+      y: number;
+      direction: THREE.Quaternion;
+      speed: number;
+      id: number;
+    }
   
     let rigidBody: RapierRigidBody
     let cam: PerspectiveCamera
@@ -21,7 +30,10 @@
 
     let interval = .05;
     let turn_length = 600;
-let isMouseDown = false;
+    let isMouseDown = false;
+
+    let worldPosition = new THREE.Vector3();
+
 
 
     let bullets:any[] = [];
@@ -68,6 +80,10 @@ let isMouseDown = false;
           }
       }
       let turn_over = false;
+      function truncateToDecimals(num: number, decimalPlaces:number) {
+          const multiplier = Math.pow(10, decimalPlaces);
+        return Math.floor(num * multiplier) / multiplier;
+      }
 
     useFrame((_, delta) => {
         if (!rigidBody || !cam) return        
@@ -83,8 +99,8 @@ let isMouseDown = false;
 
           moveDirection.normalize().multiplyScalar(speed)
           moveDirection.applyQuaternion(cam.quaternion);
-          moveDirection.x.toPrecision(100);
-          moveDirection.z.toPrecision(100);
+          moveDirection.x = truncateToDecimals(moveDirection.x, 3);
+          moveDirection.z = truncateToDecimals(moveDirection.z, 3);
 
           if (frame_counter % 3 == 0 && !turn_over) {
             if (cooldown > 0){
@@ -94,23 +110,29 @@ let isMouseDown = false;
               turn_over = true;
               document.exitPointerLock();
               console.log(moves)
+              console.log(bullets)
 
             }
             if (isMouseDown) {
               if ( bullets.length < 5 && cooldown == 0) {
                 //TODO make sure to normailze so that (0,0) is corner rather than center
-                let position = new Vector2(rigidBody.translation().x, rigidBody.translation().y)
-                console.log(position)
-                let bullet = {position: position};
+                let cam_position = cam.getWorldPosition(worldPosition).clone()
+                cam_position.x = truncateToDecimals(cam_position.x, 2);
+                cam_position.z = truncateToDecimals(cam_position.z, 2);
+                console.log(cam_position)
+
+                let position: [number, number] = [cam_position.x, cam_position.z]
+                let bullet: Bullet = {x: position[0], y: position[1], direction: cam.quaternion.clone(), speed: 25, id:(frame_counter%3)};
                 console.log(bullet)
 
-                bullets.push({position:position, cam: cam.quaternion, speed:25, index:(frame_counter%3)});
+                bullets.push(bullet);
                 
                 cooldown = 5;
               }
             }
 
             let move = {x: moveDirection.x, y: moveDirection.y}
+            moves.push(move);
 
             const currentVel = rigidBody.linvel()
             rigidBody.setLinvel({ x: moveDirection.x, y: currentVel.y, z: moveDirection.z }, true)
@@ -124,20 +146,19 @@ let isMouseDown = false;
           let bullet = bullets[i];
           
           // Calculate the displacement
-          let displacement = new Vector2(
-            Math.cos(bullet.angle) * bullet.velocity * delta,
-            Math.sin(bullet.angle) * bullet.velocity * delta
-          );
+          //TODO use fast_sin / fast_cos to match cairo logic
+          
           
           // Update the bullet's position
-          bullet.position.add(displacement);
+          bullet.x += truncateToDecimals(bullet.direction.fast_cos * bullet.velocity * delta, 2);
+          bullet.y += truncateToDecimals(bullet.direction.fast_sin * bullet.velocity * delta,2);
           
+
           // Optional: Remove bullets that have traveled too far
-          if (bullet.position.length() > 1000) { // Adjust this value as needed
+          if (Math.sqrt(bullet.x**2 + bullet.y**2) > 1000) { // Adjust this value as needed
             bullets.splice(i, 1);
             i--;
           }
-          console.log(bullets)
         }
       }
         }
