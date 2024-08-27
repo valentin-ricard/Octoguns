@@ -22,7 +22,7 @@
 </script>
 
 {#if $character && $position}
-<T.Mesh position={[$position.x/ 100, 0, $position.y / 100 - 50]}>
+<T.Mesh position={[$position.x/ 100 - 51, 0, $position.y / 100 - 51]}>
     <T.BoxGeometry/>
     <T.MeshStandardMaterial color="red"/>
 </T.Mesh>
