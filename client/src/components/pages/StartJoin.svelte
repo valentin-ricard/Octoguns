@@ -2,10 +2,10 @@
 	import { createComponentValueStore } from "../../dojo/componentValueStore";
 	import { setupStore } from "../../main";
     import { derived, writable } from "svelte/store";
-	interface GameSession {
-		userAddress: string;
-		sessionId: bigint;
-	}
+
+	//TODO: Check if games are created by the current user
+	//TODO: route if the user creates or joins a game
+	
 
 	$: ({ clientComponents, torii, burnerManager, client } = $setupStore);
 
