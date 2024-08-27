@@ -7,8 +7,6 @@
 		sessionId: bigint;
 	}
 
-	let gameSessions: GameSession[] = [];
-
 	$: ({ clientComponents, torii, burnerManager, client } = $setupStore);
 
 	$: entity = derived(setupStore, ($store) =>
@@ -19,8 +17,39 @@
 
 	$: global = createComponentValueStore(clientComponents.Global, entity);
 </script>
-
-<style>
+  
+  <main>
+	<h1>Octo Guns</h1>
+  
+	{#if !$setupStore}
+	  <p>Setting up...</p>
+	{/if}
+  
+	<div class="session-list">
+	  {#each $global.pending_sessions as session}
+		  <div class="session-item">
+			  <p>{session.value}</p>
+		  </div>
+	  {/each}
+	</div>
+  
+	<div class="buttons">
+	  <button
+ 		on:click={() => {window.location.href = '/';}}>Back</button>
+ 
+	  <button
+		on:click={async () => {
+		  const account = burnerManager.getActiveAccount();
+		  if (account) {
+			await client.start.create({ account });
+		  } else {
+			console.error("No active account found");
+		  }
+		}}>Create Game</button>
+	</div>
+  </main>
+  
+  <style>
 	main {
 	  display: flex;
 	  flex-direction: column;
