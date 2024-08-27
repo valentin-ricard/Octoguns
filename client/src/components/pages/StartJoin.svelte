@@ -16,9 +16,20 @@
 	);
 
 	$: global = createComponentValueStore(clientComponents.Global, entity);
+
+	// Add this function to handle joining a session
+	async function joinSession(session) {
+		const account = burnerManager.getActiveAccount();
+		if (account) {
+			console.log("Joining session", session.value);
+			await client.start.join({ account: account, session_id: session.value });
+		} else {
+			console.error("No active account found");
+		}
+	}
 </script>
   
-  <main>
+  <div class="higher">
 	<h1>Octo Guns</h1>
   
 	{#if !$setupStore}
@@ -26,9 +37,10 @@
 	{/if}
   
 	<div class="session-list">
-	  {#each $global.pending_sessions as session}
+	  {#each $global.pending_sessions.slice().reverse() as session}
 		  <div class="session-item">
 			  <p>{session.value}</p>
+			  <button on:click={() => joinSession(session)}>Join</button>
 		  </div>
 	  {/each}
 	</div>
@@ -47,10 +59,10 @@
 		  }
 		}}>Create Game</button>
 	</div>
-  </main>
+</div>
   
   <style>
-	main {
+	.higher {
 	  display: flex;
 	  flex-direction: column;
 	  justify-content: center;
@@ -72,18 +84,36 @@
 	  flex: 1;
 	  display: flex;
 	  flex-direction: column;
-	  justify-content: center;
-	  align-items: center;
+	  justify-content: flex-start;
+	  align-items: stretch;
 	  border: 2px solid #000;
 	  padding: 1rem;
 	  margin-bottom: 1rem;
-	  width: 50%;
+	  max-width: 80%;
+	  min-width: 40%;
+	  width: auto;
 	  max-height: 60%;
 	  overflow-y: auto;
 	}
   
 	.session-item {
 	  margin: 0.5rem 0;
+	  display: flex;
+	  justify-content: space-between;
+	  align-items: center;
+	  width: 100%;
+	  padding: 0.5rem;
+	}
+  
+	.session-item p {
+	  margin: 0;
+	  flex-grow: 1;
+	  text-align: left;
+	}
+  
+	.session-item button {
+	  margin-left: 1rem;
+	  white-space: nowrap;
 	}
   
 	.buttons {
@@ -98,33 +128,3 @@
 	}
   </style>
   
-  <main>
-	<h1>Octo Guns</h1>
-  
-	{#if !$setupStore}
-	  <p>Setting up...</p>
-	{/if}
-  
-	<div class="session-list">
-	  {#each $global.pending_sessions as session}
-		  <div class="session-item">
-			  <p>{session.value}</p>
-		  </div>
-	  {/each}
-	</div>
-  
-	<div class="buttons">
-	  <button
- 		on:click={() => {window.location.href = '/';}}>Back</button>
- 
-	  <button
-		on:click={async () => {
-		  const account = burnerManager.getActiveAccount();
-		  if (account) {
-			await client.start.create({ account });
-		  } else {
-			console.error("No active account found");
-		  }
-		}}>Create Game</button>
-	</div>
-  </main>
